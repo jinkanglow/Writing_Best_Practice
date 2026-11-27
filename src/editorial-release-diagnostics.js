@@ -1,0 +1,16 @@
+import {runNative,parity} from './editorial-native.js';
+import {sha256} from './core.js';
+const known={EDITORIAL_REQUIRED:['src/editorial-v106.js','legacy.previous.previous.legacy.editorial','Supply the complete nonfiction editorial qualification.'],SIGNED_RELEASE_REVIEW_REQUIRED:['src/editorial-runtime.js','approval','Obtain a valid signed release review.'],IDENTITY_ATTESTATION_REQUIRED:['src/editorial-native.js','policy.attestations','Obtain a trusted identity attestation.'],DIRECTIVE_COVERAGE_INVALID:['src/editorial-runtime.js','directiveCoverage','Map the parsed directive to its matching skill and polarity.'],PROGRESSION_REQUIRED:['src/editorial-v107.js','legacy.previous.previous.progression','Supply reviewed argument progression for the unit.']};
+const editorialPath='legacy.previous.previous.legacy.editorial';
+Object.assign(known,{
+ REVISION_BASELINE_MISMATCH:['src/editorial-runtime.js',editorialPath+'.qualification.orchestration.release','Supply matching before and after text across compression, release and legacy gate.'],
+ NO_NEW_EVIDENCE:['src/editorial-v108.js','legacy.previous.evidenceLinks','Bind a distinct source excerpt to the progression claim.'],
+ ORCHESTRATION_REQUIRED:['src/editorial-context.js',editorialPath+'.qualification.orchestration','Supply the full orchestration input and unified release.'],
+ NOVELTY_EVIDENCE_REQUIRED:['src/editorial-qualification-v104.js',editorialPath+'.qualification.evidence','Register source evidence for the claim.'],
+ CONTEXT_COVERAGE_REVIEW:['src/editorial-qualification-v104.js',editorialPath+'.qualification.review','Record a bound coverage review.'],
+ ENTITY_METRIC_REVIEW:['src/editorial-v105.js',editorialPath+'.review','Resolve entity and metric for the claim.'],
+ CONTEXTUAL_ENTAILMENT_REVIEW:['src/editorial-v105.js',editorialPath+'.review','Review preservation of the mapped claim context.'],
+ PROGRESSION_EVIDENCE_REQUIRED:['src/editorial-v108.js','legacy.previous.evidenceLinks','Bind progression to registered claim evidence.']
+});
+export async function diagnoseRelease(input,policy){const result=await runNative(input,policy);const audit=result.results.audit;const issues=[...audit.blockers.map(x=>({...x,severity:'blocker'})),...audit.pending.map(x=>({...x,severity:'pending'}))].map(x=>{const k=known[x.code];return {...x,source:k?.[0]??null,dependency:k?.[1]??null,repair:k?.[2]??null,attribution:k?'MAPPED':'UNMAPPED'};});return {status:audit.status,reportHash:audit.reportHash,issues,unmapped:issues.filter(x=>x.attribution==='UNMAPPED').length};}
+export async function differentialCorpus(cases,policy){const genres=['fiction','financial','macro','political','technical'];if(!Array.isArray(cases)||new Set(cases.map(c=>c.id)).size!==cases.length)throw Error('Invalid corpus');const results=[];for(const c of cases){if(!genres.includes(c.genre)||!['synthetic','real'].includes(c.origin))throw Error('Invalid case');const f=c.input.legacy.previous.previous.legacy.fusion;if((c.genre==='fiction')!==(f.mode==='fiction'))throw Error('Genre mode mismatch');results.push({id:c.id,genre:c.genre,origin:c.origin,inputHash:sha256(JSON.stringify(c.input)),...await parity(c.input,policy)});}return {results,missingGenres:genres.filter(g=>!results.some(r=>r.genre===g)),status:genres.every(g=>results.some(r=>r.genre===g))&&results.every(r=>r.status==='PASS')?'PASS':'INCOMPLETE'};}
