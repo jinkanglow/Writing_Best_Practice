@@ -1,0 +1,6 @@
+# Context-aware revision
+Compare entity, period, metric, unit, condition and relation before merging arguments. Revenue and bookings, quarterly and annual results, correlation and causation are not interchangeable. Even identical wording can refer to different populations. Record context for every claim, then inspect same-context pairs even when wording differs. A candidate is not a verdict.
+
+For each paragraph, name its contribution: new evidence, calculation, causal mechanism, counterexample, or necessary synthesis. If it adds none, consolidate it. Preserve material qualifications beside the claim they constrain; remove repetitive self-protective commentary only when it does not change the claim. For example, a sample limited to three stores cannot become a nationwide result after compression. Record the original qualification and its replacement in the mapped claim. Review coverage of all claims and qualifications, including ones the scanner missed.
+
+Run context audit before unified release. A reviewer must inspect semantic equivalence and novelty; identity strings and hashes do not establish independent review. Deliver the fused article, not the internal audit, unless requested.

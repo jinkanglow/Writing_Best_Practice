@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": [
+    "version",
+    "origin",
+    "mode",
+    "vocabulary",
+    "phrases",
+    "openers",
+    "contextExceptions",
+    "policy"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "review_candidates",
+        "strict_user_preference"
+      ]
+    },
+    "vocabulary": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "phrases": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "openers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "contextExceptions": {
+      "type": "object"
+    },
+    "policy": {
+      "type": "object"
+    }
+  }
+}

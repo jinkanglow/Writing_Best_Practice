@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "transitionPatterns": [
+    "that distinction matters",
+    "the distinction is important",
+    "the more useful conclusion is",
+    "this is why",
+    "the next question is",
+    "the distinction will become clearer",
+    "official has not confirmed",
+    "public material does not reveal",
+    "this is not established",
+    "i do not assume it",
+    "it remains unknown",
+    "i will not invent one",
+    "这一区别很重要",
+    "更有用的结论是",
+    "下一个问题是"
+  ],
+  "qualificationPatterns": [
+    "does not necessarily mean",
+    "do not necessarily mean",
+    "does not directly represent",
+    "does not establish",
+    "cannot conclude",
+    "并不意味着",
+    "不能据此断定"
+  ],
+  "thresholds": {
+    "transitionCount": 3,
+    "qualificationCount": 3,
+    "minimumSharedTokens": 5,
+    "sourceOverlap": 0.8
+  }
+}

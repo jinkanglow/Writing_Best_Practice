@@ -1,0 +1,4 @@
+[
+  {"id":"CN-EMPTY-INTRO-001","detector":"literal","phrases":["值得我们深思","不得不说","在当今快速变化的时代"],"severity":"warning","scope":["prose"],"message":"Potentially generic framing; review in context"},
+  {"id":"EN-EMPTY-INTRO-001","detector":"literal","phrases":["in today's fast-paced world","it is important to note that"],"severity":"warning","scope":["prose"],"message":"Potentially generic framing; review in context"}
+]
