@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {sha256} from '../src/core.js';
+import {auditArgumentGraph,verifyArgumentGraph} from '../src/argument-graph.js';
+const before='Evidence A. Claim B.';
+const graph={beforeHash:sha256(before),nodes:[{id:'a',quote:'Evidence A.'},{id:'b',quote:'Claim B.'}],edges:[{id:'e1',from:'a',to:'b',kind:'supports'}]};
+const review=(after,decisions)=>({beforeHash:sha256(before),afterHash:sha256(after),graphHash:sha256(JSON.stringify(graph)),decisions});
+test('preserved quotes do not prove semantic relation',()=>assert.equal(auditArgumentGraph(before,before,graph).status,'INCOMPLETE'));
+test('missing endpoint requires review',()=>assert.equal(auditArgumentGraph(before,'Claim B.',graph).findings[0].status,'REVIEW_REQUIRED'));
+test('approved review is human-only readiness',()=>assert.equal(auditArgumentGraph(before,before,graph,review(before,[{edgeId:'e1',action:'approve',reviewer:'editor',reason:'checked'}])).status,'READY_FOR_HUMAN_REVIEW'));
+test('rejection blocks',()=>assert.equal(auditArgumentGraph(before,before,graph,review(before,[{edgeId:'e1',action:'reject',reviewer:'editor',reason:'changed'}])).status,'BLOCKED'));
+test('stale graph rejected',()=>assert.throws(()=>auditArgumentGraph('changed',before,graph)));
+test('fabricated quote rejected',()=>assert.throws(()=>auditArgumentGraph(before,before,{...graph,nodes:[{id:'a',quote:'fake'},{id:'b',quote:'Claim B.'}]})));
+test('duplicate edge rejected',()=>assert.throws(()=>auditArgumentGraph(before,before,{...graph,edges:[...graph.edges,...graph.edges]})));
+test('duplicate decision rejected',()=>{const d={edgeId:'e1',action:'approve',reviewer:'x',reason:'y'};assert.throws(()=>auditArgumentGraph(before,before,graph,review(before,[d,d])))});
+test('report tampering rejected',()=>{const report=auditArgumentGraph(before,before,graph);assert.throws(()=>verifyArgumentGraph(before,before,graph,null,{...report,status:'READY_FOR_HUMAN_REVIEW'}))});
+test('valid report recomputed',()=>{const report=auditArgumentGraph(before,before,graph);assert.equal(verifyArgumentGraph(before,before,graph,null,report).status,'GRAPH_REPORT_RECOMPUTED')});

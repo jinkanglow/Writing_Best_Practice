@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {prepareGraphExtraction,validateGraphProposal,approveGraphProposal} from '../src/graph-extraction.js';
+const text='数据显示企业利润下降百分之十。\n这一变化可能影响未来的现金流。';
+const setup=()=>{const request=prepareGraphExtraction(text);const proposal={requestHash:request.requestHash,nodes:[{id:'a',quote:'数据显示企业利润下降百分之十。',role:'evidence'},{id:'b',quote:'这一变化可能影响未来的现金流。',role:'claim'}],edges:[{id:'e',from:'a',to:'b',kind:'supports'}]};return {request,proposal};};
+test('prepare binds source and candidate quotes',()=>{const r=prepareGraphExtraction(text);assert.equal(r.candidates.length,2);assert.equal(r.schemaVersion,'4.1')});
+test('validate yields review required not verified',()=>{const {request,proposal}=setup();assert.equal(validateGraphProposal(text,request,proposal).status,'REVIEW_REQUIRED')});
+test('reject fabricated quote',()=>{const {request,proposal}=setup();proposal.nodes[0].quote='不存在的证据';assert.throws(()=>validateGraphProposal(text,request,proposal))});
+test('reject stale source',()=>{const {request,proposal}=setup();assert.throws(()=>validateGraphProposal(text+'!',request,proposal))});
+test('reject duplicate node IDs',()=>{const {request,proposal}=setup();proposal.nodes[1].id='a';assert.throws(()=>validateGraphProposal(text,request,proposal))});
+test('reject unknown endpoints',()=>{const {request,proposal}=setup();proposal.edges[0].to='x';assert.throws(()=>validateGraphProposal(text,request,proposal))});
+test('reject duplicate ambiguous quote',()=>{const {request,proposal}=setup();assert.throws(()=>validateGraphProposal(text+text,request,proposal))});
+test('approval requires all decisions',()=>{const {request,proposal}=setup();const v=validateGraphProposal(text,request,proposal);assert.equal(approveGraphProposal(text,v,{reportHash:v.reportHash,decisions:[]}).status,'INCOMPLETE')});
+test('approval retains audit-only boundary',()=>{const {request,proposal}=setup();const v=validateGraphProposal(text,request,proposal);const d={reportHash:v.reportHash,decisions:[{edgeId:'e',action:'approve',reviewer:'editor',reason:'Reviewed source relationship'}]};assert.equal(approveGraphProposal(text,v,d).status,'APPROVED_FOR_AUDIT')});
+test('reject decision blocks',()=>{const {request,proposal}=setup();const v=validateGraphProposal(text,request,proposal);const d={reportHash:v.reportHash,decisions:[{edgeId:'e',action:'reject',reviewer:'editor',reason:'Unsupported'}]};assert.equal(approveGraphProposal(text,v,d).status,'BLOCKED')});
+test('reject stale decisions',()=>{const {request,proposal}=setup();const v=validateGraphProposal(text,request,proposal);assert.throws(()=>approveGraphProposal(text,v,{reportHash:'bad',decisions:[]}))});

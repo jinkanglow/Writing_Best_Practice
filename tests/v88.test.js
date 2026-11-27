@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {runAcceptanceRegression,verifyAcceptanceRegression} from '../src/craft-acceptance-regression.js';
+const cases=JSON.parse(await readFile(new URL('../benchmarks/acceptance/cases.json',import.meta.url),'utf8'));
+test('curated regression suite passes',async()=>{const r=await runAcceptanceRegression(cases);assert.equal(r.status,'PASS');assert.equal(r.passed,cases.length);});
+test('report recomputation succeeds',async()=>{const r=await runAcceptanceRegression(cases);assert.equal((await verifyAcceptanceRegression(cases,r)).status,'REPORT_RECOMPUTED');});
+test('tampered report is rejected',async()=>{const r=await runAcceptanceRegression(cases);await assert.rejects(verifyAcceptanceRegression(cases,{...r,passed:0}),/mismatch/);});
+test('changed suite invalidates report',async()=>{const r=await runAcceptanceRegression(cases);const modified=structuredClone(cases);modified[0].input.text+=' new';await assert.rejects(verifyAcceptanceRegression(modified,r),/mismatch/);});
+test('wrong expected release status fails',async()=>{const modified=structuredClone(cases);modified[0].expect.status='BLOCKED';const r=await runAcceptanceRegression(modified);assert.equal(r.status,'FAIL');assert.ok(r.results[0].failures.includes('STATUS_MISMATCH'));});
+test('wrong expected diagnostic codes fail',async()=>{const modified=structuredClone(cases);modified[0].expect.codes=['FAKE'];const r=await runAcceptanceRegression(modified);assert.ok(r.results[0].failures.includes('DIAGNOSTIC_CODES_MISMATCH'));});
+test('wrong paragraph impact fails',async()=>{const modified=structuredClone(cases);modified.find(x=>x.id==='paragraph_change').expect.affected=[2];const r=await runAcceptanceRegression(modified);assert.equal(r.status,'FAIL');});
+test('duplicate case ids rejected',async()=>{await assert.rejects(runAcceptanceRegression([...cases,cases[0]]),/duplicate/);});
+test('empty suite rejected',async()=>{await assert.rejects(runAcceptanceRegression([]),/1-500/);});
+test('unknown case kind rejected',async()=>{await assert.rejects(runAcceptanceRegression([{id:'unknown_case',kind:'other'}]),/Invalid/);});
+test('invalid release expectation rejected',async()=>{const modified=structuredClone(cases);modified[0].expect.status='PASS';await assert.rejects(runAcceptanceRegression(modified),/Invalid/);});
+test('regression result deterministic',async()=>{assert.deepEqual(await runAcceptanceRegression(cases),await runAcceptanceRegression(cases));});

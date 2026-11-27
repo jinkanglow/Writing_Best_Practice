@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {prepareRevisionPlan} from '../src/revision-plan.js';
+import {traceRevision,verifyRevisionTrace} from '../src/revision-trace.js';
+const rules=[{id:'T',detector:'literal',phrases:['不得不说'],severity:'warning',scope:['prose'],message:'generic'}];
+const before='不得不说，这件事需要证据。\n';
+const plan=prepareRevisionPlan(before,rules);
+const decisions={planHash:plan.planHash,items:[{taskId:plan.tasks[0].id,action:'approve',replacementText:'根据现有记录'}]};
+test('trace is recomputable from source inputs',()=>{const r=traceRevision(before,plan,decisions,rules);assert.equal(r.tasks[0].disposition,'RESOLVED_BY_SIGNATURE');assert.equal(verifyRevisionTrace(before,r.revisedText,plan,decisions,rules,(({revisedText,...x})=>x)(r)).status,'TRACE_RECOMPUTED');});
+test('missing decisions stay incomplete',()=>{const r=traceRevision(before,plan,{planHash:plan.planHash,items:[]},rules);assert.equal(r.status,'INCOMPLETE');});
+test('reject decision remains visible',()=>{const r=traceRevision(before,plan,{planHash:plan.planHash,items:[{taskId:plan.tasks[0].id,action:'reject'}]},rules);assert.equal(r.tasks[0].disposition,'REJECTED');});
+test('stale rules fail',()=>assert.throws(()=>traceRevision(before,plan,decisions,[]),/Rule set/));
+test('tampered report fails recomputation',()=>{const r=traceRevision(before,plan,decisions,rules);const {revisedText,...report}=r;report.status='READY_FOR_HUMAN_RELEASE';assert.throws(()=>verifyRevisionTrace(before,revisedText,plan,decisions,rules,report),/differs/);});
+test('tampered revised document fails',()=>{const r=traceRevision(before,plan,decisions,rules);const {revisedText,...report}=r;assert.throws(()=>verifyRevisionTrace(before,'other',plan,decisions,rules,report),/differs/);});

@@ -1,0 +1,14 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {prepareAnnotationCases,adjudicateAnnotations,joinPredictions} from '../src/annotation.js';
+import {evaluateBenchmark} from '../src/benchmark.js';
+const cases=[{id:'a',category:'zh-finance',ruleId:'CAUSE',text:'利润率下降证明定价权崩溃'},{id:'b',category:'en-fiction',ruleId:'POV',text:'He looked out the window.'}];
+const prepared=prepareAnnotationCases(cases);const ann=(id,annotator,label)=>({id,annotator,label,rationale:'Reviewed full context',textSha256:prepared.cases.find(x=>x.id===id).textSha256});
+test('preparation binds original text hashes',()=>{assert.equal(prepared.cases.length,2);assert.match(prepared.cases[0].textSha256,/^[0-9a-f]{64}$/)});
+test('duplicate case IDs rejected',()=>assert.throws(()=>prepareAnnotationCases([cases[0],cases[0]]),/duplicate/));
+test('single reviewer cannot certify gold',()=>{const r=adjudicateAnnotations(cases,[ann('a','r1','violation')]);assert.equal(r.status,'INCOMPLETE')});
+test('disagreement triggers review',()=>{const r=adjudicateAnnotations(cases,[ann('a','r1','violation'),ann('a','r2','no_violation')]);assert.equal(r.review[0].status,'NEEDS_ADJUDICATION')});
+test('duplicate annotator rejected',()=>assert.throws(()=>adjudicateAnnotations(cases,[ann('a','r1','violation'),ann('a','r1','violation')]),/Duplicate annotation/));
+test('stale text hash rejected',()=>assert.throws(()=>adjudicateAnnotations(cases,[{...ann('a','r1','violation'),textSha256:'bad'}]),/Invalid annotation/));
+test('consensus and joined predictions evaluate',()=>{const r=adjudicateAnnotations(cases,[ann('a','r1','violation'),ann('a','r2','violation'),ann('b','r1','no_violation'),ann('b','r2','no_violation')]);assert.equal(r.status,'CONSENSUS_COMPLETE');const rows=joinPredictions(r,[{id:'a',prediction:'violation',textSha256:prepared.cases[0].textSha256},{id:'b',prediction:'abstain',textSha256:prepared.cases[1].textSha256}]);const m=evaluateBenchmark(rows);assert.equal(m.overall.tp,1);assert.equal(m.overall.abstain,1)});
+test('prediction hash mismatch rejected',()=>{const r=adjudicateAnnotations(cases,[ann('a','r1','violation'),ann('a','r2','violation'),ann('b','r1','no_violation'),ann('b','r2','no_violation')]);assert.throws(()=>joinPredictions(r,[{id:'a',prediction:'violation',textSha256:'bad'},{id:'b',prediction:'abstain',textSha256:prepared.cases[1].textSha256}]),/hash/)});
+test('unresolved annotations block benchmark',()=>assert.throws(()=>joinPredictions(adjudicateAnnotations(cases,[]),[]),/Unresolved/));

@@ -1,0 +1,22 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {generateKeyPairSync,sign} from 'node:crypto';import {parseContextualDirectives,reviewerRegistry,verifyRegisteredBenchmark,auditV109,verifyV109} from '../src/editorial-v109.js';
+import fs from 'node:fs';import {sha256} from '../src/core.js';import {auditFusion106} from '../src/editorial-v106.js';import {auditV107} from '../src/editorial-v107.js';import {extractDirectives,auditV108} from '../src/editorial-v108.js';
+const approve=r=>({basis:r.basis,author:'a',reviewer:'b',decisions:Object.fromEntries(r.pending.filter(p=>p.id).map(p=>[p.id,{decision:'approved',reason:'Synthetic fixture'}]))});
+async function fixture(){const legacy=JSON.parse(fs.readFileSync(new URL('../examples/v106/fiction.json',import.meta.url)));const f=legacy.fusion;delete f.review;f.review=approve(auditFusion106(f));const directives=f.skills.map(s=>({id:s.id,skillId:s.id,target:'action',scope:'*',action:'require'}));const p={legacy,directives,dependencies:[{from:f.units[0].id,to:f.units[1].id,trigger:f.units[0].span.quote,payoff:f.units[1].span.quote,reason:'fixture'}],progression:[],exceptionReviews:[]};p.review=approve(await auditV107(p));const ex=extractDirectives(f.skills);const previous={previous:p,extractionMap:Object.fromEntries([...ex.candidates,...ex.unparsed].map(c=>[c.id,c.skillId])),causalRoots:[{unitId:f.units[0].id,quote:f.units[0].span.quote,reason:'Opening event'}]};previous.review=approve(await auditV108(previous));const x={previous,coverage:f.units.map((u,i)=>({unitId:u.id,predecessors:i?[f.units[i-1].id]:[],reason:'fixture'}))};x.directiveReviews=(await auditV109(x)).parsed.map(d=>({id:d.id,decision:'mapped',interpretation:'fixture'}));x.review=approve(await auditV109(x));return x;}
+test('conditional English',()=>assert.equal(parseContextualDirectives('If quoted, must not edit.')[0].condition,'quoted'));
+test('conditional Chinese',()=>assert.equal(parseContextualDirectives('如果引用，不得修改。')[0].action,'forbid'));
+test('unparsed preserved',()=>assert.equal(parseContextualDirectives('A description')[0].status,'unparsed'));
+test('offset preserved',()=>assert.equal(parseContextualDirectives('abc\nMust use facts')[1].start,4));
+const keys=generateKeyPairSync('ed25519'),entry={id:'b',status:'active',from:'2025-01-01',until:'2027-01-01',publicKey:keys.publicKey.export({type:'spki',format:'pem'})};const at='2026-01-01';
+test('active reviewer',()=>assert.ok(reviewerRegistry([entry],at).b));
+test('revoked reviewer',()=>assert.equal(reviewerRegistry([{...entry,status:'revoked'}],at).b,undefined));
+test('expired reviewer',()=>assert.equal(reviewerRegistry([entry],'2027-01-01').b,undefined));
+test('duplicate identity',()=>assert.throws(()=>reviewerRegistry([entry,entry],at)));
+test('duplicate key',()=>assert.throws(()=>reviewerRegistry([entry,{...entry,id:'c'}],at)));
+const body={id:'case',author:'a',reviewer:'b',locator:'fixture',permission:'synthetic',before:'old',after:'new',preference:'after',reason:'fixture'};const record={...body,signature:sign(null,Buffer.from(JSON.stringify(body)),keys.privateKey).toString('base64')};
+test('registered signature',()=>assert.equal(verifyRegisteredBenchmark(record,[entry],at).status,'SIGNATURE_VERIFIED'));
+test('revoked signature',()=>assert.equal(verifyRegisteredBenchmark(record,[{...entry,status:'revoked'}],at).status,'UNAUTHENTICATED'));
+test('fiction complete path',async()=>assert.equal((await auditV109(await fixture())).status,'READY_FOR_INDEPENDENT_RELEASE_REVIEW'));
+test('missing dependency coverage',async()=>{const x=await fixture();x.coverage=[];assert.ok((await auditV109(x)).blockers.some(b=>b.code==='DEPENDENCY_COVERAGE_INVALID'))});
+test('missing directive review',async()=>{const x=await fixture();x.directiveReviews=[];assert.ok((await auditV109(x)).blockers.some(b=>b.code==='DIRECTIVE_REVIEW_MISSING'))});
+test('report verification',async()=>{const x=await fixture();assert.equal((await verifyV109(x,await auditV109(x))).status,'VERIFIED')});
+test('stale report',async()=>{const x=await fixture(),r=await auditV109(x);x.coverage[0].reason+='changed';await assert.rejects(verifyV109(x,r))});

@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {verifyContract,compileReviewedCandidates} from '../src/verification.js';
+const contract=requirements=>({version:'1.6',requirements});
+const req=(obligation,text,scope=['*'])=>({id:'r1',obligation,value:'example',scope,check:{kind:'literal',text}});
+test('literal required found in prose',()=>assert.equal(verifyContract('Required fact',contract([req('must','Required')])).status,'PASS'));
+test('literal forbidden found in prose fails',()=>assert.equal(verifyContract('Required fact',contract([req('must_not','Required')])).status,'FAIL'));
+test('abstract contract remains unverified',()=>assert.equal(verifyContract('dialogue',contract([{id:'r1',obligation:'must',value:'dialogue',scope:['*']}])).status,'INCOMPLETE'));
+test('missing section remains unverified',()=>assert.equal(verifyContract('# Other\nhello',contract([req('must','hello',['chapter-3'])])).status,'INCOMPLETE'));
+test('heading scope checks only target section',()=>assert.equal(verifyContract('# Chapter 2\nsecret\n# Chapter 3\nhello',contract([req('must_not','secret',['chapter-3'])])).status,'PASS'));
+test('fenced code does not satisfy required prose',()=>assert.equal(verifyContract('```\nhello\n```',contract([req('must','hello')])).status,'FAIL'));
+test('inline code does not satisfy required prose',()=>assert.equal(verifyContract('`hello`',contract([req('must','hello')])).status,'FAIL'));
+test('review compilation never auto-approves',()=>{const r=compileReviewedCandidates({schemaVersion:'1.7',candidates:[{id:'C-1'}]},[]);assert.equal(r.review.pending,1);assert.equal(r.contract.requirements.length,0)});
+test('review compilation requires explicit complete decisions',()=>{const r=compileReviewedCandidates({schemaVersion:'1.7',candidates:[{id:'C-1'}]},[{id:'C-1',action:'approve',obligation:'must',value:'fact',scope:['*'],check:{kind:'literal',text:'fact'}}]);assert.equal(r.review.status,'COMPLETE');assert.equal(r.contract.requirements.length,1)});
+test('invalid review decisions rejected',()=>assert.throws(()=>compileReviewedCandidates({schemaVersion:'1.7',candidates:[{id:'C-1'}]},[{id:'C-1',action:'approve',value:'x'}])));

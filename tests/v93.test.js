@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditAnnotationBias,verifyAnnotationBias} from '../src/craft-annotation-bias.js';
+const policy={schemaVersion:'9.3',nearDuplicateThreshold:0.8,minReviewerPairs:1,maxReviewerPositiveRateGap:0.5};
+const make=(id,text,split='development',labels=['ISSUE','ISSUE'])=>({id,origin:'real-redacted',category:'evidence',split,groupId:id,consentReference:'consent-ref',redactionReviewed:true,redactionReviewer:'privacy-editor',annotationGuideline:'1.0',annotationDate:'2026-11-20',input:{text,required:[],stages:{}},assignedReviewers:['alice','bob'],annotations:labels.map((label,i)=>({annotator:i?'bob':'alice',label,rationale:'Independently reviewed with documented evidence.'}))});
+const reg=cases=>({schemaVersion:'9.1',cases});
+test('distinct texts do not trigger duplicate',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning'),make('case_two','ocean tides and rain')]),policy);assert.equal(r.summary.nearDuplicatePairs,0);});
+test('identical text is flagged',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning'),make('case_two','gold futures positioning')]),policy);assert.ok(r.issues.some(x=>x.code==='NEAR_DUPLICATE_SAMPLE'));});
+test('cross split near duplicates are flagged',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning'),make('case_two','gold futures positioning','holdout')]),policy);assert.ok(r.issues.some(x=>x.code==='NEAR_DUPLICATE_SPLIT_LEAKAGE'));});
+test('word-order changes remain detectable',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning'),make('case_two','positioning futures gold')]),policy);assert.equal(r.summary.nearDuplicatePairs,1);});
+test('reviewer disagreement rate is compared on paired cases',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning','development',['ISSUE','NO_ISSUE'])]),policy);assert.ok(r.issues.some(x=>x.code==='REVIEWER_RATE_DISPARITY'));});
+test('no reviewer pairs at high threshold produces warning',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning')]),{...policy,minReviewerPairs:2});assert.ok(r.warnings.some(x=>x.code==='INSUFFICIENT_SHARED_REVIEWS'));});
+test('matching reviewers do not trigger disparity',()=>{const r=auditAnnotationBias(reg([make('case_one','gold futures positioning')]),policy);assert.ok(!r.issues.some(x=>x.code==='REVIEWER_RATE_DISPARITY'));});
+test('empty registry has no inferred reviewer bias',()=>{const r=auditAnnotationBias(reg([]),policy);assert.equal(r.summary.reviewers,0);});
+test('invalid threshold is rejected',()=>assert.throws(()=>auditAnnotationBias(reg([]),{...policy,nearDuplicateThreshold:2}),/policy/));
+test('report recomputation succeeds',()=>{const registry=reg([make('case_one','gold futures positioning')]);const r=auditAnnotationBias(registry,policy);assert.equal(verifyAnnotationBias(registry,policy,r).status,'REPORT_RECOMPUTED');});
+test('tampered report rejected',()=>{const registry=reg([make('case_one','gold futures positioning')]);const r=auditAnnotationBias(registry,policy);assert.throws(()=>verifyAnnotationBias(registry,policy,{...r,status:'READY'}),/mismatch/);});
+test('changed policy invalidates report',()=>{const registry=reg([make('case_one','gold futures positioning')]);const r=auditAnnotationBias(registry,policy);assert.throws(()=>verifyAnnotationBias(registry,{...policy,nearDuplicateThreshold:0.9},r),/mismatch/);});

@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {detectAvoidAI,verifyAvoidAI} from '../src/avoid-ai-writing.js';
+test('Chinese filler and pseudo contrast detected',()=>{const r=detectAvoidAI('在当今社会，这不是速度问题，而是成本问题。',{context:'cn-explanatory'});assert.ok(r.findings.some(x=>x.id==='CN-FORMULA'));assert.ok(r.findings.some(x=>x.id==='CN-PSEUDO-CONTRAST'));});
+test('hedging and attribution are not automatically deleted',()=>{const r=detectAvoidAI('黄金可能下跌，依据公开数据。',{context:'cn-explanatory'});assert.equal(r.findings.length,0);});
+test('code and quoted material excluded',()=>{const r=detectAvoidAI('```\n在当今社会\n```\n> 值得我们深思\n正文。',{context:'cn-explanatory'});assert.equal(r.findings.length,0);});
+test('English boilerplate flagged',()=>{const r=detectAvoidAI('Great question! Only time will tell.');assert.equal(r.counts.P0,1);assert.equal(r.counts.P1,1);});
+test('UTF8 byte spans roundtrip',()=>{const t='中文：值得我们深思。';const r=detectAvoidAI(t,{context:'cn-explanatory'});const f=r.findings[0];assert.equal(Buffer.from(t).subarray(f.startByte,f.endByte).toString(),f.quote);});
+test('stale report rejected',()=>{const t='在当今社会。';const r=detectAvoidAI(t);assert.throws(()=>verifyAvoidAI(t+'新',r));});
+test('tampered finding rejected',()=>{const t='在当今社会。';const r=detectAvoidAI(t);r.findings[0].quote='伪造';assert.throws(()=>verifyAvoidAI(t,r));});
+test('valid report verified',()=>{const t='值得我们深思。';assert.equal(verifyAvoidAI(t,detectAvoidAI(t)).status,'VERIFIED');});
+test('invalid context rejected',()=>assert.throws(()=>detectAvoidAI('x',{context:'invalid'})));
+test('no authorship verdict',()=>{const r=detectAvoidAI('在当今社会。');assert.ok(r.limitations.some(x=>x.includes('authorship')));});

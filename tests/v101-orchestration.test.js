@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {sha256} from '../src/core.js';import {extractClaimCandidates,auditEditorialOrchestration,verifyEditorialOrchestration} from '../src/editorial-orchestration.js';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');const json=p=>JSON.parse(read(p));
+const fixture=()=>({text:read('examples/intelligence/article.md'),plan:json('examples/intelligence/plan.json'),rules:json('rules/editorial-originality.json'),catalog:json('rules/anti-slop-catalog.json'),policy:json('rules/editorial-intelligence.json')});
+test('candidate extraction Chinese punctuation',()=>assert.equal(extractClaimCandidates('收入增加。成本下降。').length,2));
+test('candidate IDs stable',()=>assert.deepEqual(extractClaimCandidates('A fact.'),extractClaimCandidates('A fact.')));
+test('blank rejected',()=>assert.throws(()=>extractClaimCandidates(' ')));
+test('missing evidence blocks',async()=>assert.equal((await auditEditorialOrchestration(fixture())).status,'BLOCKED'));
+test('missing source quote',async()=>assert.ok((await auditEditorialOrchestration(fixture())).blockers.some(x=>x.code==='SOURCE_QUOTE_MISSING')));
+test('missing contribution artifact',async()=>assert.ok((await auditEditorialOrchestration(fixture())).blockers.some(x=>x.code==='CONTRIBUTION_ARTIFACT_INVALID')));
+test('missing unified gate',async()=>assert.ok((await auditEditorialOrchestration(fixture())).pending.some(x=>x.code==='UNIFIED_RELEASE_REQUIRED')));
+test('mismatched release document',async()=>assert.ok((await auditEditorialOrchestration({...fixture(),release:{text:'other'}})).blockers.some(x=>x.code==='RELEASE_DOCUMENT_MISMATCH')));
+test('valid artifact removes artifact blocker',async()=>{const f=fixture();f.evidence={artifacts:{o1:{content:'20 * 5 = 100',hash:sha256('20 * 5 = 100')}}};assert.ok(!(await auditEditorialOrchestration(f)).blockers.some(x=>x.code==='CONTRIBUTION_ARTIFACT_INVALID'));});
+test('fake artifact hash rejected',async()=>{const f=fixture();f.evidence={artifacts:{o1:{content:'20 * 5 = 100',hash:'fake'}}};assert.ok((await auditEditorialOrchestration(f)).blockers.some(x=>x.code==='CONTRIBUTION_ARTIFACT_INVALID'));});
+test('report recomputation',async()=>{const f=fixture();assert.equal((await verifyEditorialOrchestration(f,await auditEditorialOrchestration(f))).status,'VERIFIED');});
+test('tampered report rejected',async()=>{const f=fixture();const r=await auditEditorialOrchestration(f);r.status='READY';await assert.rejects(verifyEditorialOrchestration(f,r));});
+test('stale document rejected',async()=>await assert.rejects(auditEditorialOrchestration({...fixture(),text:'changed'})));
+test('forged quote rejected',async()=>{const f=fixture();f.evidence={support:{c1:{s1:{quote:'made up'}}}};assert.ok((await auditEditorialOrchestration(f)).blockers.some(x=>x.id==='c1:s1'));});

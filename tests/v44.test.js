@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {inspectAvoidAITiers,verifyAvoidAITiers} from '../src/avoid-ai-tiers.js';
+import {resolveAvoidAIPolicy} from '../src/avoid-ai-policy.js';
+const scan=(s,o)=>inspectAvoidAITiers(s,o);
+test('casual context disables tier 1',()=>assert.equal(scan('delve',{context:'casual'}).findings.length,0));
+test('technical context needs three tier 2 occurrences',()=>assert.equal(scan('navigate foster',{context:'technical-blog'}).findings.length,0));
+test('technical context fires on three tier 2 occurrences',()=>assert.equal(scan('navigate foster harness',{context:'technical-blog'}).findings.filter(f=>f.id==='LEXICON-T2-CLUSTER').length,3));
+test('English repeated tier3 term triggers window',()=>assert.equal(scan('significant '+Array(97).fill('data').join(' ')+' significant significant').findings.filter(f=>f.id==='LEXICON-T3-WINDOW').length,3));
+test('English tier3 repeated beyond 100 words does not trigger window',()=>assert.equal(scan('significant '+Array(110).fill('data').join(' ')+' significant '+Array(110).fill('data').join(' ')+' significant').findings.filter(f=>f.id==='LEXICON-T3-WINDOW').length,0));
+test('Chinese repeated term triggers window',()=>assert.ok(scan('真正的'+ '甲'.repeat(20)+'真正的'+'乙'.repeat(20)+'真正的').findings.some(f=>f.id==='LEXICON-T3-WINDOW')));
+test('non-native tolerance requires explicit opt-in',()=>assert.equal(resolveAvoidAIPolicy({nonNativeTolerance:true}).windowRepeat,null));
+test('non-native tolerance raises threshold',()=>assert.equal(scan('significant '+Array(30).fill('data').join(' '),{nonNativeTolerance:true}).statistics.en.threshold,.05));
+test('non-native tolerance disables sliding window',()=>assert.equal(scan('significant significant significant',{nonNativeTolerance:true}).findings.filter(f=>f.id==='LEXICON-T3-WINDOW').length,0));
+test('reject invalid non-native option',()=>assert.throws(()=>scan('x',{nonNativeTolerance:'yes'}),/Invalid/));
+test('policy recorded and tamper verification fails',()=>{const r=scan('delve');r.policy.tier1=false;assert.throws(()=>verifyAvoidAITiers('delve',r),/stale/)});
+test('quoted text and code excluded from window',()=>assert.equal(scan('> significant significant significant\n```\nsignificant significant significant\n```').findings.length,0));

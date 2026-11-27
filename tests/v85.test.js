@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditCIDiagnostics,verifyCIDiagnostics,githubAnnotations,diagnosticsMarkdown,diagnosticFromPipeline} from '../src/craft-ci-diagnostics.js';
+const input={text:'Revenue increased.',required:['coherence'],stages:{}};
+test('missing stage is actionable',async()=>{const r=await auditCIDiagnostics(input);assert.equal(r.status,'INCOMPLETE');assert.equal(r.items[0].code,'STAGE_INPUT_MISSING');assert.match(r.items[0].action,/Supply/);});
+test('report is reproducible',async()=>{const r=await auditCIDiagnostics(input);assert.equal((await verifyCIDiagnostics(input,r)).status,'REPORT_RECOMPUTED');});
+test('tampering fails',async()=>{const r=await auditCIDiagnostics(input);await assert.rejects(verifyCIDiagnostics(input,{...r,status:'READY'}),/mismatch/);});
+test('document changes invalidate report',async()=>{const r=await auditCIDiagnostics(input);await assert.rejects(verifyCIDiagnostics({...input,text:'Changed.'},r),/mismatch/);});
+test('github annotation includes file and stage',async()=>{const r=await auditCIDiagnostics(input,{file:'docs/article.md'});assert.match(githubAnnotations(r),/file=docs\/article.md,title=coherence\/STAGE_INPUT_MISSING/);});
+test('markdown includes actionable guidance',async()=>{const r=await auditCIDiagnostics(input);assert.match(diagnosticsMarkdown(r),/Supply the required stage input/);});
+test('no stages is incomplete',async()=>{const r=await auditCIDiagnostics({text:'x',required:[],stages:{}});assert.equal(r.items[0].code,'NO_REQUIRED_STAGES');});
+test('bad stage is blocked',async()=>{const r=await auditCIDiagnostics({text:'x',required:['evidence'],stages:{evidence:{records:[]}}});assert.equal(r.status,'BLOCKED');assert.equal(r.items[0].severity,'error');});
+test('rejects invalid report',()=>assert.throws(()=>diagnosticFromPipeline({}),/Invalid pipeline/));
+test('github escapes control characters',()=>{const r=diagnosticFromPipeline({documentHash:'x',reportHash:'h',status:'BLOCKED',results:{},blockers:[{stage:'coherence',code:'INVALID_STAGE_INPUT',detail:'bad\n::warning'}],pending:[]},{file:'a,b.md'});assert.doesNotMatch(githubAnnotations(r),/bad\n/);assert.match(githubAnnotations(r),/a%2Cb.md/);});

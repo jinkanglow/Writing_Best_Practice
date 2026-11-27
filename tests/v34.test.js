@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditEditorialSafety,verifyEditorialSafety} from '../src/editorial-safety.js';
+const original='The estimate may rise. According to the filing, the margin is 4%.\n';
+const inventory=[{id:'q1',kind:'qualification',quote:'may rise'},{id:'a1',kind:'attribution',quote:'According to the filing'}];
+test('retained inventory passes text-only check',()=>{const r=auditEditorialSafety(original,original,inventory);assert.equal(r.status,'TEXT_CHECK_COMPLETE');assert.equal(verifyEditorialSafety(original,original,inventory,r).status,'REPORT_RECOMPUTED');});
+test('removed qualification requires review',()=>{const r=auditEditorialSafety(original,original.replace('may rise','will rise'),inventory);assert.equal(r.status,'INCOMPLETE');assert.equal(r.items[0].reason,'DECLARED_TEXT_REMOVED');});
+test('removed attribution requires review',()=>assert.equal(auditEditorialSafety(original,original.replace('According to the filing, ',''),inventory).status,'INCOMPLETE'));
+test('duplicated quote requires review',()=>assert.equal(auditEditorialSafety(original,original+'may rise\n',inventory).items[0].reason,'DECLARED_TEXT_DUPLICATED'));
+test('stale document invalidates report',()=>{const r=auditEditorialSafety(original,original,inventory);assert.throws(()=>verifyEditorialSafety(original,original+'x',inventory,r),/mismatch/);});
+test('tampered report invalidates',()=>{const r=auditEditorialSafety(original,original,inventory);r.items[0].status='TEXT_RETAINED';r.items[0].reason='FAKE';assert.throws(()=>verifyEditorialSafety(original,original,inventory,r),/mismatch/);});
+test('ambiguous original quote rejected',()=>assert.throws(()=>auditEditorialSafety('may rise may rise','may rise',inventory.slice(0,1)),/exactly once/));
+test('duplicate IDs rejected',()=>assert.throws(()=>auditEditorialSafety(original,original,[inventory[0],inventory[0]]),/duplicate/));
+test('unsupported kinds rejected',()=>assert.throws(()=>auditEditorialSafety(original,original,[{id:'x',kind:'unknown',quote:'may rise'}]),/Invalid/));
+test('unicode spans use UTF8 byte offsets',()=>{const b='黄金可能上涨';const r=auditEditorialSafety(b,b,[{id:'cn',kind:'qualification',quote:'可能'}]);assert.equal(r.items[0].beforeSpan.startOffset,6);});
+test('missing original quote rejected',()=>assert.throws(()=>auditEditorialSafety(original,original,[{id:'z',kind:'claim',quote:'not here'}]),/exactly once/));

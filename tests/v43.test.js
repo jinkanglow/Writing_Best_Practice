@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {inspectAvoidAITiers,verifyAvoidAITiers} from '../src/avoid-ai-tiers.js';
+const audit=(s,o)=>inspectAvoidAITiers(s,o);
+test('Tier 1 English matches with exact byte offsets',()=>{const s='你好 delve into the topic.';const f=audit(s).findings.find(x=>x.term==='delve');assert.equal(Buffer.from(s).subarray(f.startByte,f.endByte).toString(),'delve');});
+test('Tier 1 Chinese',()=>assert.ok(audit('在当今社会，我们研究数据。').findings.some(x=>x.term==='在当今社会')));
+test('Tier 2 requires cluster',()=>{assert.equal(audit('We navigate complexity.').findings.filter(x=>x.id==='LEXICON-T2-CLUSTER').length,0);assert.equal(audit('We navigate and foster trust.').findings.filter(x=>x.id==='LEXICON-T2-CLUSTER').length,2);});
+test('Tier 2 does not combine separate paragraphs',()=>assert.equal(audit('We navigate.\n\nWe foster.').findings.filter(x=>x.id==='LEXICON-T2-CLUSTER').length,0));
+test('Tier 3 density calculated with documented denominator',()=>{const r=audit('Significant significant significant result.');assert.equal(r.statistics.en.units,4);assert.equal(r.statistics.en.tier3Occurrences,3);assert.equal(r.statistics.en.density,.75);});
+test('No denominator returns null density',()=>assert.equal(audit('1234').statistics.en.density,null));
+test('Excludes fenced code and quotes',()=>assert.equal(audit('```\ndelve\n```\n> delve').findings.length,0));
+test('Does not flag English substrings',()=>assert.equal(audit('undelved').findings.length,0));
+test('Chinese UTF-8 spans are accurate',()=>{const s='价格上涨。在当今社会';const f=audit(s).findings[0];assert.equal(Buffer.from(s).subarray(f.startByte,f.endByte).toString(),f.quote);});
+test('Report verification rejects stale report',()=>{const s='delve';const r=audit(s);assert.equal(verifyAvoidAITiers(s,r).status,'VERIFIED');assert.throws(()=>verifyAvoidAITiers('delve more',r),/stale/);});
+test('Invalid context and threshold rejected',()=>{assert.throws(()=>audit('text',{context:'unknown'}));assert.throws(()=>audit('text',{tier3Threshold:0}));});
+test('Technical context relaxes density threshold',()=>assert.equal(audit('significant '+Array(24).fill('data').join(' '),{context:'technical-blog'}).statistics.en.threshold,.05));

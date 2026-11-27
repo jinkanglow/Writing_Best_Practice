@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {inspectStyle,DEFAULT_STYLE_POLICY,validateStylePolicy} from '../src/style-signals.js';
+import {attributeRegressions} from '../src/regression-attribution.js';
+import {proposePatch} from '../src/core.js';
+const rules=[{id:'bad',detector:'literal',phrases:['bad phrase'],severity:'error',scope:['prose']}];
+test('stock phrase is a review signal, not an authorship verdict',()=>{const r=inspectStyle('It is worth noting that evidence matters.');assert.equal(r.status,'REVIEW_REQUIRED');assert(r.findings.some(f=>f.ruleId==='STYLE-STOCK-PHRASE'));assert(r.limitations.some(x=>x.includes('authorship')));});
+test('code blocks are excluded',()=>assert.equal(inspectStyle('```\nMoreover, moreover, moreover!\n```').findings.length,0));
+test('ordinary content has no configured signal',()=>assert.equal(inspectStyle('The bond yield fell after the auction.').status,'NO_CONFIGURED_SIGNALS'));
+test('repeated punctuation is review only',()=>assert(inspectStyle('Wait!!!').findings.some(f=>f.ruleId==='STYLE-EXCLAMATION')));
+test('configured sentence opener is flagged',()=>assert(inspectStyle('Moreover, the data changed.').findings.some(f=>f.ruleId==='STYLE-FORMULAIC-OPENER')));
+test('policy validation rejects invalid limits',()=>assert.throws(()=>validateStylePolicy({...DEFAULT_STYLE_POLICY,maxEmDashesPerParagraph:-1})));
+test('single patch attribution finds introduced deterministic error',()=>{const text='A valid opening.\n';const p=proposePatch(text,{startOffset:2,endOffset:7,replacementText:'bad phrase'});const result=attributeRegressions(text,[p],rules);assert(result.combinedIntroduced.some(x=>x.ruleId==='bad'));assert(result.perPatch[0].standaloneIntroduced.some(x=>x.ruleId==='bad'));});
+test('stale patch is rejected',()=>{const p=proposePatch('abc',{startOffset:0,endOffset:1,replacementText:'x'});assert.throws(()=>attributeRegressions('different',[p],rules));});
+test('empty patch set is rejected',()=>assert.throws(()=>attributeRegressions('Ordinary prose.',[],rules),/Nonempty patches/));

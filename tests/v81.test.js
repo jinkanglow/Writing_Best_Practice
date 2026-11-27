@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditUnifiedRelease,verifyUnifiedRelease} from '../src/craft-unified-release.js';
+const text='Revenue was 12 million. Costs increased.';
+const base={text,required:['coherence'],stages:{coherence:{entries:[]}}};
+test('pipeline pending propagates to release',async()=>{const r=await auditUnifiedRelease(base);assert.equal(r.status,'INCOMPLETE');assert.equal(r.pipelineStatus,'INCOMPLETE');});
+test('legacy requirement fails closed',async()=>{const r=await auditUnifiedRelease({...base,requireLegacy:true});assert.ok(r.pending.some(x=>x.code==='LEGACY_GATE_REQUIRED'));});
+test('legacy document mismatch blocks',async()=>{const r=await auditUnifiedRelease({...base,legacy:{after:'other',before:null}});assert.equal(r.status,'BLOCKED');});
+test('legacy baseline mismatch blocks',async()=>{const r=await auditUnifiedRelease({...base,before:'before',legacy:{after:text,before:'different'}});assert.equal(r.status,'BLOCKED');});
+test('invalid legacy gate cannot pass',async()=>{const r=await auditUnifiedRelease({...base,legacy:{after:text,before:null}});assert.equal(r.status,'BLOCKED');assert.ok(r.blockers.some(x=>x.code==='INVALID_LEGACY_INPUT'));});
+test('report recomputation succeeds',async()=>{const r=await auditUnifiedRelease(base);assert.equal((await verifyUnifiedRelease(base,r)).status,'REPORT_RECOMPUTED');});
+test('tampered report rejected',async()=>{const r=await auditUnifiedRelease(base);await assert.rejects(verifyUnifiedRelease(base,{...r,status:'READY_FOR_INDEPENDENT_RELEASE_REVIEW'}),/mismatch/);});
+test('edited document invalidates report',async()=>{const r=await auditUnifiedRelease(base);await assert.rejects(verifyUnifiedRelease({...base,text:text+' more'},r),/mismatch/);});
+test('invalid required stages rejected',async()=>{await assert.rejects(auditUnifiedRelease({...base,required:['unknown']}),/Invalid/);});
+test('missing required stages rejected',async()=>{await assert.rejects(auditUnifiedRelease({...base,required:null}),/Invalid/);});
+test('invalid legacy requirement rejected',async()=>{await assert.rejects(auditUnifiedRelease({...base,requireLegacy:'true'}),/Invalid/);});
+test('empty stage set cannot imply release',async()=>{const r=await auditUnifiedRelease({...base,required:[],stages:{}});assert.equal(r.status,'INCOMPLETE');});

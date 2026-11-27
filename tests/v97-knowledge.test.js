@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
+const root=new URL('../',import.meta.url);
+const load=(f)=>fs.readFileSync(new URL(f,root),'utf8');
+test('knowledge checker passes',()=>assert.match(execFileSync(process.execPath,[new URL('scripts/knowledge-check.js',root).pathname],{encoding:'utf8'}),/KNOWLEDGE_OK/));
+test('catalog is not represented as AI authorship proof',()=>{const d=JSON.parse(load('rules/anti-slop-catalog.json'));assert.equal(d.policy.never_claim_ai_detection,true);assert.equal(d.mode,'review_candidates');});
+test('skill is a short router',()=>{const s=load('SKILL.md');assert.ok(s.split('\n').length<100);assert.match(s,/fusion-protocol/);});
+test('legacy documentation preserved',()=>assert.ok(load('docs/LEGACY-SKILL-INSTRUCTIONS.md').length>30000));
+test('anti-slop list includes user phrases',()=>{const d=JSON.parse(load('rules/anti-slop-catalog.json'));assert.ok(d.vocabulary.includes('delve'));assert.ok(d.phrases.includes('in conclusion'));});
+test('source craft references contain exceptions',()=>assert.match(load('references/voice-and-point-of-view.md'),/Counterexample/));

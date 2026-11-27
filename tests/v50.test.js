@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {inspectNumericalIntegrity} from '../src/numerical-integrity.js';
+const check=(a,b)=>inspectNumericalIntegrity([{taskId:'t1',before:a,after:b}]);
+const has=(a,b,category)=>check(a,b).some(f=>f.category===category);
+test('v5.0 percent vs percentage point',()=>assert.ok(has('上涨3%','上涨3个百分点','percentage_point')));
+test('v5.0 detects percentage changes',()=>assert.ok(has('上涨3%','上涨4%','percentage')));
+test('v5.0 currency amount change',()=>assert.ok(has('USD 3.5 billion','USD 4.5 billion','currency')));
+test('v5.0 RMB change',()=>assert.ok(has('人民币300亿','人民币400亿','currency')));
+test('v5.0 YoY to QoQ',()=>assert.ok(has('同比上涨','环比上涨','relative_period')));
+test('v5.0 negation removed',()=>assert.ok(has('尚未盈利','已经盈利','negation')));
+test('v5.0 range changed',()=>assert.ok(has('3–5%','4–5%','range')));
+test('v5.0 exchange ticker',()=>assert.ok(has('NASDAQ:NVDA','NASDAQ:AMD','ticker')));
+test('v5.0 unchanged no risk',()=>assert.deepEqual(check('USD 4.5 billion','USD 4.5 billion'),[]));
+test('v5.0 rejects malformed changes',()=>assert.throws(()=>inspectNumericalIntegrity([{taskId:'x',before:3,after:'ok'}])));
+test('v5.0 detects repeated token count',()=>assert.ok(has('同比同比','同比','relative_period')));
+test('v5.0 does not pretend generic names are identified',()=>assert.equal(has('谷歌','微软','ticker'),false));

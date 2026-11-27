@@ -1,0 +1,36 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {mkdtemp,writeFile} from 'node:fs/promises';
+import {tmpdir} from 'node:os';
+import {join} from 'node:path';
+import {sha256} from '../src/core.js';
+import {prepareEvidenceBound} from '../src/craft-evidence-bound.js';
+import {auditSourceChangeImpact,verifySourceChangeImpact} from '../src/craft-source-change.js';
+const h=x=>sha256(JSON.stringify(x));
+async function fixture(){
+ const root=await mkdtemp(join(tmpdir(),'writing-v78-'));
+ const text='Revenue rose.\n\nProfit may follow.';
+ const plan=prepareEvidenceBound(text);
+ const sources=[{id:'s1',locator:'local',excerpt:'Revenue rose.',retrievedAt:'2026-11-20',contentHash:sha256('Revenue rose.')}];
+ const claims=[{id:'c1',type:'FACT',paragraphId:plan.paragraphs[0].id,quote:'Revenue rose.',interpretation:'Reported increase'},{id:'c2',type:'INFERENCE',paragraphId:plan.paragraphs[1].id,quote:'Profit may follow.',interpretation:'Conditional outlook',dependsOn:['c1']}];
+ const records={sources,claims,links:[{id:'l1',claimId:'c1',sourceId:'s1',kind:'SUPPORTS',excerptQuote:'Revenue rose.',reasoning:'Literal excerpt'},{id:'l2',claimId:'c2',sourceId:'s1',kind:'SUPPORTS',excerptQuote:'Revenue rose.',reasoning:'Underlying data'}],reviews:[{claimId:'c1',reviewer:'Editor',rationale:'Checked',decision:'APPROVE'},{claimId:'c2',reviewer:'Editor',rationale:'Checked',decision:'APPROVE'}]};
+ await writeFile(join(root,'source.txt'),'Revenue rose.');
+ const current=[{id:'s1',path:'source.txt',sha256:sha256('Revenue rose.')}];
+ const baseline=[{id:'s1',path:'source.txt',sha256:sha256('Prior source.')}];
+ const inputs={text,plan,records,root,baseline,current};
+ return inputs;
+}
+test('change propagates to direct and dependent claims',async()=>{const i=await fixture();const r=await auditSourceChangeImpact(i);assert.equal(r.status,'INCOMPLETE');assert.deepEqual(r.impactedClaims.map(x=>x.claimId),['c1','c2']);assert.equal(r.changedSources[0].kind,'MODIFIED');});
+test('missing review is fail closed',async()=>{const i=await fixture();const r=await auditSourceChangeImpact(i);assert.equal(r.pending.filter(x=>x.code==='SOURCE_CHANGE_REVIEW_REQUIRED').length,2);});
+test('approved rechecks yield ready',async()=>{const i=await fixture();i.reviews=['c1','c2'].map(claimId=>({claimId,decision:'RECHECKED',reviewer:'Editor',rationale:'Compared new snapshot and updated reasoning',documentHash:sha256(i.text),baselineManifestHash:h(i.baseline),currentManifestHash:h(i.current)}));const r=await auditSourceChangeImpact(i);assert.equal(r.status,'READY_FOR_INDEPENDENT_RELEASE_REVIEW');assert.equal((await verifySourceChangeImpact(i,r)).status,'REPORT_RECOMPUTED');});
+test('stale review blocked',async()=>{const i=await fixture();i.reviews=['c1','c2'].map(claimId=>({claimId,decision:'RECHECKED',reviewer:'Editor',rationale:'Checked',documentHash:'wrong',baselineManifestHash:h(i.baseline),currentManifestHash:h(i.current)}));assert.equal((await auditSourceChangeImpact(i)).status,'BLOCKED');});
+test('rejected review blocked',async()=>{const i=await fixture();i.reviews=[{claimId:'c1',decision:'REJECT',reviewer:'Editor',rationale:'Not verified',documentHash:sha256(i.text),baselineManifestHash:h(i.baseline),currentManifestHash:h(i.current)}];assert.equal((await auditSourceChangeImpact(i)).status,'BLOCKED');});
+test('unchanged source requires no change review',async()=>{const i=await fixture();i.baseline=i.current;const r=await auditSourceChangeImpact(i);assert.equal(r.status,'READY_FOR_INDEPENDENT_RELEASE_REVIEW');assert.equal(r.impactedClaims.length,0);});
+test('missing current file is blocked',async()=>{const i=await fixture();i.current=[{id:'s1',path:'missing.txt',sha256:sha256('Revenue rose.')}];assert.equal((await auditSourceChangeImpact(i)).status,'BLOCKED');});
+test('modified current bytes are blocked',async()=>{const i=await fixture();await writeFile(join(i.root,'source.txt'),'Modified.');assert.equal((await auditSourceChangeImpact(i)).status,'BLOCKED');});
+test('tampered report rejected',async()=>{const i=await fixture();const r=await auditSourceChangeImpact(i);r.status='READY_FOR_INDEPENDENT_RELEASE_REVIEW';await assert.rejects(verifySourceChangeImpact(i,r));});
+test('duplicate pin rejected',async()=>{const i=await fixture();i.current.push(i.current[0]);await assert.rejects(auditSourceChangeImpact(i));});
+test('duplicate review rejected',async()=>{const i=await fixture();const r={claimId:'c1',decision:'RECHECKED',reviewer:'Editor',rationale:'Checked',documentHash:sha256(i.text),baselineManifestHash:h(i.baseline),currentManifestHash:h(i.current)};i.reviews=[r,r];await assert.rejects(auditSourceChangeImpact(i));});
+test('orphan review blocked',async()=>{const i=await fixture();i.reviews=[{claimId:'missing',decision:'RECHECKED',reviewer:'Editor',rationale:'Checked',documentHash:sha256(i.text),baselineManifestHash:h(i.baseline),currentManifestHash:h(i.current)}];assert.equal((await auditSourceChangeImpact(i)).status,'BLOCKED');});
+test('removed source requires review',async()=>{const i=await fixture();i.current=[];const r=await auditSourceChangeImpact(i);assert.equal(r.changedSources[0].kind,'REMOVED');assert.equal(r.status,'INCOMPLETE');});
+test('added source recorded',async()=>{const i=await fixture();i.baseline=[];const r=await auditSourceChangeImpact(i);assert.equal(r.changedSources[0].kind,'ADDED');});

@@ -1,0 +1,15 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {prepareRevisionPlan,verifyRevisionPlan,executeRevisionPlan} from '../src/revision-plan.js';
+const rules=[{id:'cliche',detector:'literal',phrases:['不得不说'],severity:'warning',message:'Remove filler'}];
+const text='开头不得不说，结尾。';
+const plan=()=>prepareRevisionPlan(text,rules);
+test('plan source exact byte span',()=>{const p=plan();assert.equal(p.tasks.length,1);assert.equal(verifyRevisionPlan(text,p).status,'PLAN_INTEGRITY_VERIFIED');assert.equal(Buffer.from(text).subarray(p.tasks[0].source.startOffset,p.tasks[0].source.endOffset).toString(),'不得不说')});
+test('approved edit produces revised text',()=>{const p=plan();const r=executeRevisionPlan(text,p,{planHash:p.planHash,items:[{taskId:p.tasks[0].id,action:'approve',replacementText:'确实'}]});assert.equal(r.revisedText,'开头确实，结尾。');assert.equal(r.status,'REVIEW_REQUIRED')});
+test('missing decision incomplete',()=>{const p=plan();assert.equal(executeRevisionPlan(text,p,{planHash:p.planHash,items:[]}).status,'INCOMPLETE')});
+test('stale plan rejected',()=>assert.throws(()=>verifyRevisionPlan(text+'x',plan()),/Stale/));
+test('tampered task rejected',()=>{const p=plan();p.tasks[0].source.quote='伪造';assert.throws(()=>verifyRevisionPlan(text,p),/checksum/)});
+test('duplicate decision rejected',()=>{const p=plan();const d={taskId:p.tasks[0].id,action:'reject'};assert.throws(()=>executeRevisionPlan(text,p,{planHash:p.planHash,items:[d,d]}),/duplicate/)});
+test('protected source cannot be edited',()=>{const p=prepareRevisionPlan(text,rules,[{id:'fact',quote:'不得不说'}]);assert.throws(()=>executeRevisionPlan(text,p,{planHash:p.planHash,items:[{taskId:p.tasks[0].id,action:'approve',replacementText:'确实'}]}),/Protected/)});
+test('ambiguous protected anchor rejected',()=>assert.throws(()=>prepareRevisionPlan('甲甲',[],[{id:'x',quote:'甲'}]),/Ambiguous/));
+test('invalid decision hash rejected',()=>assert.throws(()=>executeRevisionPlan(text,plan(),{planHash:'x',items:[]}),/stale/));
+test('reject preserves original',()=>{const p=plan();const r=executeRevisionPlan(text,p,{planHash:p.planHash,items:[{taskId:p.tasks[0].id,action:'reject'}]});assert.equal(r.revisedText,text)});

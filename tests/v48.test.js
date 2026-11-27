@@ -1,0 +1,15 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {evaluateRewriteRiskBenchmark,verifyRewriteRiskBenchmark} from '../src/rewrite-risk-benchmark.js';
+const dataset=JSON.parse(readFileSync(new URL('../benchmarks/rewrite-risk/illustrative.json',import.meta.url),'utf8'));
+test('v4.8 illustrative corpus runs with explicit synthetic provenance',()=>{const r=evaluateRewriteRiskBenchmark(dataset);assert.equal(r.caseCount,7);assert.equal(r.provenance,'synthetic');assert.equal(r.metrics.tp,6);});
+test('v4.8 category metrics include all five categories',()=>assert.equal(Object.keys(evaluateRewriteRiskBenchmark(dataset).metrics.perCategory).length,5));
+test('v4.8 no-change case has no predictions',()=>assert.deepEqual(evaluateRewriteRiskBenchmark(dataset).results.find(x=>x.id==='style-only').predicted,[]));
+test('v4.8 report verifies by recomputation',()=>{const r=evaluateRewriteRiskBenchmark(dataset);assert.equal(verifyRewriteRiskBenchmark(dataset,{},r).status,'REPORT_RECOMPUTED');});
+test('v4.8 tampered report rejected',()=>{const r=evaluateRewriteRiskBenchmark(dataset);assert.throws(()=>verifyRewriteRiskBenchmark(dataset,{}, {...r,caseCount:99}));});
+test('v4.8 altered dataset invalidates report',()=>{const r=evaluateRewriteRiskBenchmark(dataset);const d=structuredClone(dataset);d.cases[0].replacement='改动';assert.throws(()=>verifyRewriteRiskBenchmark(d,{},r));});
+test('v4.8 duplicate case IDs rejected',()=>{const d=structuredClone(dataset);d.cases[1].id=d.cases[0].id;assert.throws(()=>evaluateRewriteRiskBenchmark(d));});
+test('v4.8 invalid categories rejected',()=>{const d=structuredClone(dataset);d.cases[0].expected=['fiction'];assert.throws(()=>evaluateRewriteRiskBenchmark(d));});
+test('v4.8 absent target quote rejected',()=>{const d=structuredClone(dataset);d.cases[0].targetQuote='不存在';assert.throws(()=>evaluateRewriteRiskBenchmark(d));});
+test('v4.8 missing provenance rejected',()=>{const d=structuredClone(dataset);delete d.provenance;assert.throws(()=>evaluateRewriteRiskBenchmark(d));});

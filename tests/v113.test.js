@@ -1,0 +1,12 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {evidenceStore,semanticLifecycle,measurePair} from '../src/editorial-native.js';
+test('source binding',()=>{const s=evidenceStore(),h=s.register('a','abc');assert.equal(s.check('a','bc',h),true)});
+test('source mutation blocked',()=>{const s=evidenceStore();s.register('a','abc');assert.throws(()=>s.register('a','def'))});
+test('unknown source fails',()=>assert.equal(evidenceStore().check('a','x','h'),false));
+test('quote cache',()=>{const s=evidenceStore(),h=s.register('a','abc');s.check('a','a',h);s.check('a','a',h);assert.equal(s.stats().uniqueChecks,1)});
+test('wrong hash fails',()=>{const s=evidenceStore();s.register('a','abc');assert.equal(s.check('a','a','bad'),false)});
+test('decision stale',()=>{const s=semanticLifecycle();s.put('a','v1',{ok:true});assert.equal(s.get('a','v2'),null)});
+test('decision conflict',()=>{const s=semanticLifecycle();s.put('a','v1',{ok:true});assert.throws(()=>s.put('a','v1',{ok:false}))});
+test('decision invalidation',()=>{const s=semanticLifecycle();s.put('a','v1',{ok:true});s.invalidate('a');assert.equal(s.get('a','v1'),null)});
+test('decision isolation',()=>{const s=semanticLifecycle();s.put('a','v1',{ok:true});s.get('a','v1').ok=false;assert.equal(s.get('a','v1').ok,true)});
+test('measurement not independent',()=>{const a={accuracy:3,clarity:3,argument:3,originality:3};assert.equal(measurePair(a,{...a,clarity:4}).deltas.clarity,1);assert.equal(measurePair(a,a).independence,'NOT_VERIFIED')});
+test('invalid scores',()=>assert.throws(()=>measurePair({},{})));

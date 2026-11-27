@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditUnifiedPipeline,verifyUnifiedPipeline} from '../src/craft-unified-pipeline.js';
+const text='The company reported revenue of 12 million.\n\nThe margin may decline because costs rose.';
+const base={text,profile:'analytical-nonfiction'};
+test('no required stages cannot imply release readiness',async()=>{const r=await auditUnifiedPipeline({...base,required:[],stages:{}});assert.equal(r.status,'INCOMPLETE');assert.deepEqual(r.required,[]);});
+test('required missing stage fails closed',async()=>{const r=await auditUnifiedPipeline({...base,required:['evidence'],stages:{}});assert.equal(r.status,'INCOMPLETE');});
+test('coverage cannot omit evidence dependency',async()=>{await assert.rejects(auditUnifiedPipeline({...base,required:['coverage']}),/requires evidence/);});
+test('structure cannot omit coherence dependency',async()=>{await assert.rejects(auditUnifiedPipeline({...base,required:['structure']}),/requires coherence/);});
+test('invalid stage data is blocked',async()=>{const r=await auditUnifiedPipeline({...base,required:['evidence'],stages:{evidence:{records:{}}}});assert.equal(r.status,'BLOCKED');});
+test('missing baseline blocks structure',async()=>{const r=await auditUnifiedPipeline({...base,required:['coherence','structure'],stages:{coherence:{},structure:{}}});assert.equal(r.results.structure.status,'BLOCKED');});
+test('coverage shares evidence records',async()=>{const r=await auditUnifiedPipeline({...base,required:['evidence','coverage'],stages:{evidence:{records:{}},coverage:{decisions:[]}}});assert.equal(r.status,'BLOCKED');});
+test('report recomputes',async()=>{const input={...base,required:['coherence'],stages:{coherence:{entries:[]}}};const report=await auditUnifiedPipeline(input);assert.equal((await verifyUnifiedPipeline(input,report)).status,'REPORT_RECOMPUTED');});
+test('tampered report rejected',async()=>{const input={...base,required:['coherence'],stages:{coherence:{entries:[]}}};const report=await auditUnifiedPipeline(input);await assert.rejects(verifyUnifiedPipeline(input,{...report,status:'READY_FOR_INDEPENDENT_RELEASE_REVIEW'}),/mismatch/);});
+test('modified document invalidates report',async()=>{const input={...base,required:['coherence'],stages:{coherence:{entries:[]}}};const report=await auditUnifiedPipeline(input);await assert.rejects(verifyUnifiedPipeline({...input,text:text+' extra'},report),/mismatch/);});
+test('duplicate stages rejected',async()=>{await assert.rejects(auditUnifiedPipeline({...base,required:['evidence','evidence']}),/Invalid/);});
+test('unknown stages rejected',async()=>{await assert.rejects(auditUnifiedPipeline({...base,required:['magic']}),/Invalid/);});

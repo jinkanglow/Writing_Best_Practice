@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {assureEditorialCI,verifyEditorialCIAssurance} from '../src/craft-ci-assurance.js';
+const input={text:'Revenue rose by 12%.',required:['coherence'],stages:{coherence:{entries:[]}}};
+test('CI assurance proves parity and invalidation',async()=>{const r=await assureEditorialCI(input);assert.deepEqual(Object.values(r.checks),[true,true,true,true]);});
+test('CI assurance has expected cache reuse',async()=>{const r=await assureEditorialCI(input);assert.deepEqual(r.secondReused,['coherence']);});
+test('CI assurance mutation invalidates stage',async()=>{const r=await assureEditorialCI(input);assert.deepEqual(r.mutationExecuted,['coherence']);});
+test('CI assurance wrong key invalidates stage',async()=>{const r=await assureEditorialCI(input);assert.deepEqual(r.wrongKeyExecuted,['coherence']);});
+test('CI evidence is reproducible',async()=>{const r=await assureEditorialCI(input);assert.deepEqual(await verifyEditorialCIAssurance(input,r),{status:'REPORT_RECOMPUTED',evidenceHash:r.evidenceHash});});
+test('CI evidence tampering is rejected',async()=>{const r=await assureEditorialCI(input);await assert.rejects(verifyEditorialCIAssurance(input,{...r,decision:'READY'}),/mismatch/);});
+test('CI does not grant release permission',async()=>{const r=await assureEditorialCI(input);assert.equal(r.releaseAuthority,'INDEPENDENT_FULL_RELEASE_REVIEW_REQUIRED');});
+test('CI rejects unchanged mutation probe',async()=>await assert.rejects(assureEditorialCI(input,{mutatedText:input.text}),/must change/));
+test('CI supports dependent stages',async()=>{const r=await assureEditorialCI({...input,required:['evidence','coverage'],stages:{evidence:{records:{}},coverage:{decisions:[]}}});assert.deepEqual(r.secondReused,['evidence','coverage']);});

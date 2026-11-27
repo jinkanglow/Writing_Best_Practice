@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {prepareDriftTasks,evaluateDrift,validateDriftCases} from '../src/drift.js';
+const cases=[{id:'a',kind:'thesis_reversal',before:'Costs are increasing.',after:'Costs are decreasing.',gold:'violation',goldEvidence:{side:'after',quote:'decreasing'},annotation:{method:'independent_consensus',reviewers:['r1','r2']}},{id:'b',kind:'fact_removal',before:'Revenue was 10.',after:'Revenue was 10.',gold:'no_violation',goldEvidence:{side:'after',quote:'Revenue'},annotation:{method:'independent_consensus',reviewers:['r1','r2']}}];
+const env=()=>{const tasks=prepareDriftTasks(cases).tasks;return {schemaVersion:'2.7',provider:{name:'offline',model:'test'},predictions:tasks.map((t,i)=>({id:t.id,beforeHash:t.beforeHash,afterHash:t.afterHash,prediction:i?'no_violation':'violation',evidence:{side:'after',quote:i?'Revenue':'decreasing'}}))};};
+test('preparation excludes gold labels',()=>assert.equal(JSON.stringify(prepareDriftTasks(cases)).includes('goldEvidence'),false));
+test('correct predictions calculate metrics',()=>{const r=evaluateDrift(cases,env());assert.equal(r.metrics.overall.tp,1);assert.equal(r.metrics.overall.tn,1);assert.equal(r.errors.length,0);});
+test('false negative audited',()=>{const e=env();e.predictions[0].prediction='no_violation';assert.equal(evaluateDrift(cases,e).errors[0].type,'FALSE_NEGATIVE');});
+test('missing prediction is incomplete and abstained',()=>{const e=env();e.predictions.pop();const r=evaluateDrift(cases,e);assert.equal(r.status,'INCOMPLETE');assert.equal(r.metrics.overall.abstain,1);});
+test('reject stale hashes',()=>{const e=env();e.predictions[0].afterHash='0'.repeat(64);assert.throws(()=>evaluateDrift(cases,e),/Stale/);});
+test('reject fabricated prediction quote',()=>{const e=env();e.predictions[0].evidence.quote='fabricated';assert.throws(()=>evaluateDrift(cases,e),/Ungrounded/);});
+test('reject fabricated gold quote',()=>{const c=structuredClone(cases);c[0].goldEvidence.quote='fabricated';assert.throws(()=>validateDriftCases(c),/Ungrounded/);});
+test('reject duplicate reviewer',()=>{const c=structuredClone(cases);c[0].annotation.reviewers=['r1','r1'];assert.throws(()=>validateDriftCases(c),/independent/);});
+test('reject duplicate prediction',()=>{const e=env();e.predictions.push(e.predictions[0]);assert.throws(()=>evaluateDrift(cases,e),/duplicate/);});
+test('reject unknown prediction',()=>{const e=env();e.predictions[0].id='unknown';assert.throws(()=>evaluateDrift(cases,e),/unknown/);});
+test('abstain evidence forbidden',()=>{const e=env();e.predictions[0].prediction='abstain';assert.throws(()=>evaluateDrift(cases,e),/Abstention/);});
+test('abstention without evidence',()=>{const e=env();e.predictions[0].prediction='abstain';delete e.predictions[0].evidence;assert.equal(evaluateDrift(cases,e).metrics.overall.abstain,1);});
+test('reject duplicate case',()=>assert.throws(()=>validateDriftCases([cases[0],cases[0]]),/duplicate/));

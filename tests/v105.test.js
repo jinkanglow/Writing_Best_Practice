@@ -1,0 +1,18 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {resolveTerms,compareContext,auditV105,verifyV105,auditFusionV2,evaluateIndependent} from '../src/editorial-v105.js';
+const fixture=()=>JSON.parse(fs.readFileSync(new URL('../examples/v105/input.json',import.meta.url)));const plan=()=>JSON.parse(fs.readFileSync(new URL('../examples/fusion/romance-plan.json',import.meta.url)));
+test('metric candidate',()=>assert.equal(resolveTerms('sales',fixture().registry)[1].status,'candidate'));
+test('missing entity',()=>assert.equal(resolveTerms('sales',fixture().registry)[0].status,'missing'));
+test('ambiguous alias',()=>assert.equal(resolveTerms('sales',[...fixture().registry,{kind:'metric',id:'other',aliases:['sales']}])[1].status,'ambiguous'));
+test('empty anchor rejected',()=>assert.throws(()=>resolveTerms('',[])));
+const context={entity:'a',metric:'sales',period:'May',unit:'units',condition:'all',relation:'observed',polarity:'positive',modality:'asserted'};
+test('context match candidate',()=>assert.equal(compareContext(context,context).status,'candidate-match'));
+for(const k of Object.keys(context))test('context drift '+k,()=>assert.equal(compareContext(context,{...context,[k]:'changed'}).status,'different'));
+test('missing context',()=>assert.equal(compareContext(context,{}).status,'incomplete'));
+test('integrated gate incomplete',async()=>assert.equal((await auditV105(fixture())).status,'INCOMPLETE'));
+test('integrated verify',async()=>{const x=fixture();assert.equal((await verifyV105(x,await auditV105(x))).status,'VERIFIED')});
+test('tampered report rejected',async()=>{const x=fixture(),r=await auditV105(x);r.status='READY';await assert.rejects(verifyV105(x,r))});
+test('stale registry rejected',async()=>{const x=fixture(),r=await auditV105(x);x.registry=[];await assert.rejects(verifyV105(x,r))});
+test('fusion missing closure blocked',()=>assert.equal(auditFusionV2(plan(),'draft').status,'BLOCKED'));
+test('fusion structural closure',()=>{const p=plan();p.constraintSkills=[{name:'style',kind:'habit-list'}];p.closure=Object.fromEntries(p.anchors.map(a=>[a.id,{quote:'draft',reason:'example'}]));p.transitionReviews=p.transitions.map(()=>Object.fromEntries(['structure','specificity','honesty'].map(k=>[k,{decision:'pass',reason:'example'}])));assert.equal(auditFusionV2(p,'draft').status,'READY_FOR_SEMANTIC_REVIEW')});
+test('no independent cases invented',()=>assert.deepEqual(evaluateIndependent([]),[]));
+test('self review rejected',()=>assert.throws(()=>evaluateIndependent([{id:'a',author:'x',reviewer:'x'}])));

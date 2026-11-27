@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {auditExternalAntiSlop,verifyExternalAntiSlop} from '../src/external-anti-slop.js';
+test('finds generic opening and marketing inflation',()=>{const r=auditExternalAntiSlop('At its core, this will unlock the power of automation.');assert.deepEqual(r.findings.map(f=>f.code),['GENERIC-OPENING','MARKETING-INFLATION']);});
+test('preserves precise prose',()=>assert.equal(auditExternalAntiSlop('Revenue declined 7% in Q2.').findings.length,0));
+test('does not rewrite source',()=>assert.equal(auditExternalAntiSlop('Delve into data.').findings[0].action,'REVIEW_ONLY'));
+test('verifies exact report',()=>{const s='In conclusion, costs rose.';assert.equal(verifyExternalAntiSlop(s,auditExternalAntiSlop(s)).status,'VERIFIED');});
+test('rejects stale report',()=>assert.throws(()=>verifyExternalAntiSlop('New',auditExternalAntiSlop('Old'))));
+test('rejects tampered report',()=>{const s='At its core, a test.';const r=auditExternalAntiSlop(s);r.findings=[];assert.throws(()=>verifyExternalAntiSlop(s,r));});
+test('rejects non-string',()=>assert.throws(()=>auditExternalAntiSlop(null)));
+test('does not flag normal technical use of robust',()=>assert.equal(auditExternalAntiSlop('A robust checksum guards this archive.').findings.length,0));
+test('handles UTF-8 byte offsets',()=>{const s='中文 At its core, test.';const f=auditExternalAntiSlop(s).findings[0];assert.equal(f.startByte,7);});

@@ -1,0 +1,18 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+import {auditFusionPlan,verifyFusionPlan} from '../src/fusion-plan.js';
+const base=JSON.parse(await readFile(new URL('../examples/fusion/romance-plan.json',import.meta.url)));
+const copy=()=>structuredClone(base);
+test('complete fusion plan requires semantic review',()=>assert.equal(auditFusionPlan(base).status,'READY_FOR_SEMANTIC_REVIEW'));
+test('report recomputation verifies',()=>assert.equal(verifyFusionPlan(base,auditFusionPlan(base)).status,'VERIFIED'));
+test('tampered report rejected',()=>{const r=auditFusionPlan(base);r.status='QUALIFIED';assert.equal(verifyFusionPlan(base,r).status,'INVALID_REPORT')});
+test('stale report rejected',()=>{const p=copy();p.anchors[0].requirement+=' changed';assert.equal(verifyFusionPlan(p,auditFusionPlan(base)).status,'INVALID_REPORT')});
+test('missing translation blocks',()=>{const p=copy();p.translations.pop();assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='UNMAPPED_ANCHOR'))});
+test('abstract translation blocks',()=>{const p=copy();p.translations[0].observableAction='';assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='ABSTRACT_TRANSLATION'))});
+test('unknown constraint blocks',()=>{const p=copy();p.translations[0].constraintIds=['missing'];assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='UNKNOWN_CONSTRAINT'))});
+test('pending conflict blocks',()=>{const p=copy();p.conflicts[0].status='pending';assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='UNRESOLVED_CONFLICT'))});
+test('unjustified resolution blocks',()=>{const p=copy();p.conflicts[0].rationale='';assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='UNJUSTIFIED_RESOLUTION'))});
+test('duplicate anchor blocks',()=>{const p=copy();p.anchors.push({...p.anchors[0]});assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='INVALID_ANCHOR'))});
+test('invalid transition blocks',()=>{const p=copy();p.transitions[0].questions.pop();assert.ok(auditFusionPlan(p).issues.some(i=>i.code==='INVALID_TRANSITION'))});
+test('invalid schema rejects',()=>assert.throws(()=>auditFusionPlan({...base,schemaVersion:2}),TypeError));

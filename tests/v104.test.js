@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {extractContext,qualify,verifyQualification,runBenchmark} from '../src/editorial-qualification-v104.js';
+const f=()=>JSON.parse(fs.readFileSync(new URL('../examples/qualification-v104/input.json',import.meta.url)));const cases=()=>JSON.parse(fs.readFileSync(new URL('../examples/qualification-v104/cases.json',import.meta.url)));
+for(const [s,k,q] of [['May sales','period','May'],['2025年收入','period','2025年'],['20 units','unit','20 units'],['下降20%','unit','20%'],['if demand falls','condition','if demand falls'],['仅限国内','condition','仅限国内'],['sales fell','relation','fell'],['预计增长','relation','预计']])test('extract '+s,()=>assert.equal(extractContext(s)[k][0].quote,q));
+test('empty anchor',()=>assert.throws(()=>extractContext('')));
+test('missing review fails closed',async()=>assert.equal((await qualify(f())).status,'INCOMPLETE'));
+test('missing evidence',async()=>assert.ok((await qualify(f())).pending.some(x=>x.code==='NOVELTY_EVIDENCE_REQUIRED')));
+test('invalid evidence',async()=>{const x=f();x.evidence={a:[{sourceId:'fake',quote:'fake'}]};assert.ok((await qualify(x)).blockers.some(x=>x.code==='NOVELTY_EVIDENCE_INVALID'))});
+test('lost condition candidate',async()=>{const x=f();x.context.compression.before+=' if demand falls';x.context.compression.beforeClaims[1].anchor='May sales were 20 units. if demand falls';assert.ok((await qualify(x)).findings.some(x=>x.kind==='qualification-candidate'))});
+test('verify',async()=>{const x=f();assert.equal((await verifyQualification(x,await qualify(x))).status,'VERIFIED')});
+test('tamper',async()=>{const x=f(),r=await qualify(x);r.status='READY';await assert.rejects(verifyQualification(x,r))});
+test('benchmark',async()=>{const r=await runBenchmark(cases());assert.equal(r.passed,1);assert.equal(r.realCases,0)});
+test('real provenance required',async()=>{const c=cases();c[0].origin='real';await assert.rejects(runBenchmark(c))});
+test('duplicate cases rejected',async()=>{const c=cases();await assert.rejects(runBenchmark([...c,...c]))});

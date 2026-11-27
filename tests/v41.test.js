@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {quoteSpan,verifyQuoteSpan,candidateWindows} from '../src/graph-spans.js';
+import {prepareGraphExtraction,validateGraphProposal} from '../src/graph-extraction.js';
+const t='第一段说明，利润可能下降百分之十。\n\n第二段认为，这可能影响未来现金流。';
+test('UTF8 byte spans are exact',()=>{const q='利润可能下降百分之十';const s=quoteSpan(t,q);assert.equal(verifyQuoteSpan(t,q,s),true);assert.ok(s.startByte>t.indexOf(q));});
+test('reject partial UTF8 byte boundaries',()=>{const q='利润可能下降百分之十';const s=quoteSpan(t,q);assert.throws(()=>verifyQuoteSpan(t,q,{...s,startByte:s.startByte+1}));});
+test('reject stale quote hash',()=>{const q='利润可能下降百分之十';const s=quoteSpan(t,q);assert.throws(()=>verifyQuoteSpan(t,q,{...s,quoteHash:'bad'}));});
+test('preserve blank line offsets',()=>{const c=candidateWindows(t);assert.equal(c.length,2);for(const n of c)assert.equal(verifyQuoteSpan(t,n.quote,n.span),true);});
+test('exclude code blocks',()=>{const s='```js\n这里有一行很长的伪造语句，不应该被提取。\n```\n这里有一行足够长的真实陈述，可以被提取。';const c=candidateWindows(s);assert.equal(c.length,1);});
+test('reject ambiguous quotes in proposals',()=>{const s='同一条陈述可能出现重复的文字。\n同一条陈述可能出现重复的文字。';assert.throws(()=>quoteSpan(s,'同一条陈述可能出现重复的文字。'));});
+test('proposal generates verified node spans',()=>{const r=prepareGraphExtraction(t);const p={requestHash:r.requestHash,nodes:[{id:'a',quote:r.candidates[0].quote,role:'claim'},{id:'b',quote:r.candidates[1].quote,role:'evidence'}],edges:[{id:'e',from:'b',to:'a',kind:'supports'}]};const v=validateGraphProposal(t,r,p);assert.equal(v.schemaVersion,'4.1');for(const n of v.graph.nodes)assert.equal(verifyQuoteSpan(t,n.quote,n.span),true);});
+test('reject forged supplied span',()=>{const r=prepareGraphExtraction(t);const p={requestHash:r.requestHash,nodes:[{id:'a',quote:r.candidates[0].quote,role:'claim',span:{startByte:0,endByte:1,quoteHash:'bad'}}],edges:[]};assert.throws(()=>validateGraphProposal(t,r,p));});
