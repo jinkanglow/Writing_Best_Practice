@@ -1,0 +1,12 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {executeGraph,decisionRegistry} from '../src/editorial-execution-graph.js';
+const node=(id,dependencies=[],run=()=>id)=>({id,dependencies,run});
+test('dependency order',async()=>assert.deepEqual((await executeGraph([node('b',['a']),node('a')])).order,['a','b']));
+test('shared dependency once',async()=>{let n=0;await executeGraph([node('b',['a']),node('c',['a']),node('a',[],()=>++n)]);assert.equal(n,1)});
+test('cycle rejected',async()=>assert.rejects(executeGraph([node('a',['b']),node('b',['a'])]),/Cycle/));
+test('missing dependency',async()=>assert.rejects(executeGraph([node('a',['b'])]),/Missing/));
+test('duplicate node',async()=>assert.rejects(executeGraph([node('a'),node('a')]),/Invalid/));
+test('dependency output',async()=>assert.equal((await executeGraph([node('a'),node('b',['a'],d=>d.a)])).results.b,'a'));
+test('failed node stops downstream',async()=>{let ran=false;await assert.rejects(executeGraph([node('a',[],()=>{throw Error('fail')}),node('b',['a'],()=>{ran=true})]));assert.equal(ran,false)});
+test('registry consolidates',()=>assert.equal(decisionRegistry([{code:'x',severity:'pending',occurrences:2},{code:'x',severity:'pending'}])[0].occurrences,3));
+test('registry conflict',()=>assert.throws(()=>decisionRegistry([{code:'x',severity:'pending'},{code:'x',severity:'blocker'}]),/Conflicting/));
+test('registry scope distinct',()=>assert.equal(decisionRegistry([{code:'x',id:'a'},{code:'x',id:'b'}]).length,2));

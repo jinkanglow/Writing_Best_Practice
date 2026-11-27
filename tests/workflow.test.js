@@ -1,0 +1,17 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {runWritingWorkflow,verifyWritingWorkflow} from '../src/workflow.js';
+const before='Revenue rose 5%. Demand caused the increase.';
+const anchors=[{id:'a',kind:'fact',quote:'Revenue rose 5%'}];
+const inventory=[{id:'i',kind:'fact',quote:'Revenue rose 5%',anchorId:'a'}];
+const run=(o={})=>runWritingWorkflow({before,after:before,anchors,inventory,rules:[],...o});
+test('unchanged protected facts yield human release readiness',()=>{const r=run();assert.equal(r.status,'READY_FOR_HUMAN_RELEASE');assert.equal(verifyWritingWorkflow(r).status,'INTEGRITY_VERIFIED');});
+test('changed anchor without review is incomplete',()=>assert.equal(run({after:'Revenue fell 5%.'}).status,'INCOMPLETE'));
+test('missing coverage is incomplete',()=>assert.equal(run({inventory:[{id:'i',kind:'fact',quote:'Revenue rose 5%',anchorId:'missing'}]}).status,'INCOMPLETE'));
+test('error severity blocks release',()=>{const r=run({rules:[{id:'r',detector:'literal',phrases:['Revenue'],severity:'error'}]});assert.equal(r.status,'BLOCKED');});
+test('warning severity requires review',()=>{const r=run({rules:[{id:'r',detector:'literal',phrases:['Revenue'],severity:'warning'}]});assert.equal(r.status,'INCOMPLETE');});
+test('tampered workflow checksum rejected',()=>{const r=run();r.status='BLOCKED';assert.throws(()=>verifyWritingWorkflow(r),/checksum/);});
+test('tampered bundle rejected even with recomputed workflow checksum',()=>{const r=run();r.bundle.before='tampered';import('node:crypto').then(()=>{});assert.throws(()=>verifyWritingWorkflow(r),/checksum/);});
+test('invalid metadata rejected',()=>assert.throws(()=>run({metadata:{bad:42}}),/metadata/));
+test('invalid rules rejected',()=>assert.throws(()=>run({rules:[{id:'r',detector:'invalid',phrases:['x'],severity:'error'}]}),/detector/));
+test('empty inventory rejected',()=>assert.throws(()=>run({inventory:[]}),/inventory/));

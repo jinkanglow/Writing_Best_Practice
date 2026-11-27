@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {generateKeyPairSync,sign} from 'node:crypto';import {sha256} from '../src/core.js';import {evidenceSession,sourceDigest,sourceContains} from '../src/editorial-evidence-session.js';import {attest,consolidate,runConsolidated,verifyConsolidated} from '../src/editorial-consolidated.js';import {fixture} from './v110-fixture.js';import {auditV109} from '../src/editorial-v109.js';import {runEditorial} from '../src/editorial-runtime.js';
+const k=generateKeyPairSync('ed25519'),a=generateKeyPairSync('ed25519'),pem=k=>k.publicKey.export({type:'spki',format:'pem'}),entry={id:'b',publicKey:pem(k),status:'active',from:'2026-01-01',until:'2027-01-01'},at='2026-11-27',authorities={authority:pem(a)};const body={purpose:'reviewer-identity-v11.1',reviewer:'b',keyHash:sha256(pem(k)),identityRef:'synthetic-id',method:'fixture',issuer:'authority',from:'2026-01-01',until:'2027-01-01'},attestation={...body,signature:sign(null,Buffer.from(JSON.stringify(body)),a.privateKey).toString('base64')};const policy={registry:[entry],at,authorities,attestations:[attestation]};
+test('one hash and quote check per session',async()=>{const r=await evidenceSession(()=>{for(let i=0;i<3;i++){assert.equal(sourceDigest('abc'),sha256('abc'));assert.equal(sourceContains('abc','b'),true);}});assert.deepEqual(r.stats,{sourceHashes:1,quoteChecks:1,cacheHits:4});});
+test('negative quote cached',async()=>{const r=await evidenceSession(()=>{assert.equal(sourceContains('abc','x'),false);assert.equal(sourceContains('abc','x'),false)});assert.equal(r.stats.quoteChecks,1)});
+test('sessions isolated',async()=>{const rs=await Promise.all([1,2].map(()=>evidenceSession(()=>sourceDigest('abc'))));assert.ok(rs.every(r=>r.stats.sourceHashes===1))});
+test('consolidation retains count',()=>assert.equal(consolidate([{code:'A',id:'1'},{code:'A',id:'1'}])[0].occurrences,2));
+test('different scope retained',()=>assert.equal(consolidate([{code:'A',id:'1'},{code:'A',id:'2'}]).length,2));
+test('attestation valid',()=>assert.equal(attest(entry,attestation,authorities,at),true));
+test('expired attestation',()=>assert.equal(attest(entry,attestation,authorities,'2028-01-01'),false));
+test('unknown authority',()=>assert.equal(attest(entry,attestation,{},at),false));
+test('tampered identity',()=>assert.equal(attest(entry,{...attestation,identityRef:'other'},authorities,at),false));
+async function signed(){const legacy=await fixture(),x={legacy,directiveCoverage:(await auditV109(legacy)).parsed.map(d=>({id:d.id,directiveId:d.skillId,decision:'mapped',reason:'fixture'}))};const r=await runEditorial(x,policy);x.approval={reviewer:'b',signature:sign(null,Buffer.from(JSON.stringify({...r.body,reviewer:'b'})),k.privateKey).toString('base64')};return x;}
+test('attested fiction release',async()=>assert.equal((await runConsolidated(await signed(),policy)).status,'REVIEW_AUTHORIZED'));
+test('missing attestation fails closed',async()=>assert.equal((await runConsolidated(await signed(),{...policy,attestations:[]})).status,'INCOMPLETE'));
+test('recompute report',async()=>{const x=await signed();assert.equal((await verifyConsolidated(x,policy,await runConsolidated(x,policy))).status,'VERIFIED')});
+
+test('RC6 authorized fiction native parity',async()=>{const {runNative,parity}=await import('../src/editorial-native.js');const x=await signed();assert.equal((await runNative(x,policy)).results.release.status,'REVIEW_AUTHORIZED');assert.equal((await parity(x,policy)).status,'PASS');});

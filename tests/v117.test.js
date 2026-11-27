@@ -1,0 +1,13 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {sourceDigest,sourceContains,evidenceSession} from '../src/editorial-evidence-session.js';
+import {sha256} from '../src/core.js';import {evidenceStore} from '../src/editorial-native.js';
+import {evidenceBoundQuality} from '../src/editorial-quality-evidence.js';
+const dims=['factRetention','mechanism','progression','compression','fusion'];const scores=Object.fromEntries(dims.map(d=>[d,4]));
+const input={before:'Sales rose 20%.',after:'Sales rose 20%.',author:'a',beforeScores:scores,afterScores:scores,evidence:dims.map(d=>({dimension:d,before:{start:0,quote:'Sales rose 20%.'},after:{start:0,quote:'Sales rose 20%.'},reason:'Synthetic test only'}))};const policy={registry:[],at:'2026-11-27'};
+test('legacy synchronous evidence calls retain results through store',()=>{assert.equal(sourceDigest('abc'),sha256('abc'));assert.equal(sourceContains('abc','b'),true);assert.equal(sourceContains('abc','z'),false);});
+test('store rejects mutation and reuses identical source',()=>{const s=evidenceStore();assert.equal(s.register('a','abc'),s.register('a','abc'));assert.throws(()=>s.register('a','xyz'));});
+test('session caches quote checks',async()=>{const r=await evidenceSession(()=>[sourceContains('abc','b'),sourceContains('abc','b')]);assert.equal(r.stats.quoteChecks,1);assert.equal(r.stats.cacheHits,1);});
+test('unsigned quality review cannot pass',()=>assert.equal(evidenceBoundQuality(input,policy).status,'INCOMPLETE'));
+test('stale quality span blocks',()=>assert.equal(evidenceBoundQuality({...input,after:'Sales fell.'},policy).status,'BLOCKED'));
+test('missing dimension blocks',()=>assert.equal(evidenceBoundQuality({...input,evidence:input.evidence.slice(1)},policy).status,'BLOCKED'));
+test('score regression blocks despite valid spans',()=>assert.equal(evidenceBoundQuality({...input,afterScores:{...scores,mechanism:3}},policy).status,'BLOCKED'));

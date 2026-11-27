@@ -1,0 +1,21 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {auditEditorialIntelligence as audit,verifyEditorialIntelligence as verify} from '../src/editorial-intelligence.js';
+const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');const json=p=>JSON.parse(read(p));const text=read('examples/intelligence/article.md');const plan=()=>json('examples/intelligence/plan.json');const rules=json('rules/editorial-originality.json'),catalog=json('rules/anti-slop-catalog.json'),policy=json('rules/editorial-intelligence.json');const run=p=>audit(text,p,rules,catalog,policy);
+function approve(p){const r=run(p);p.review={basis:r.reviewBasis,reviewer:'editor-fixture',author:'author-fixture',policyEvidence:'Synthetic policy review fixture',decision:'approved',decisions:r.reviewItems.map(x=>({id:x.id,reason:'Synthetic review fixture',decision:'retain'}))};return p;}
+test('missing review is incomplete',()=>assert.equal(run(plan()).status,'INCOMPLETE'));
+test('approved fixture ready only for review',()=>assert.equal(run(approve(plan())).status,'READY_FOR_RELEASE_REVIEW'));
+test('stale document rejected',()=>assert.throws(()=>audit(text+'x',plan(),rules,catalog,policy),/stale/));
+test('source cycle rejected',()=>{const p=plan();p.sources[0].parents=['s1'];assert.throws(()=>run(p),/cycle/)});
+test('unknown source rejected',()=>{const p=plan();p.claims[0].sources=['x'];assert.throws(()=>run(p),/claim/)});
+test('duplicate source rejected',()=>{const p=plan();p.sources.push(p.sources[0]);assert.throws(()=>run(p),/duplicate/)});
+test('unsupported fact blocks',()=>{const p=plan();p.claims[0].sources=[];assert.equal(run(p).status,'BLOCKED')});
+test('unmapped paragraph pending',()=>{const p=plan();p.claims.pop();p.contributions=[];assert.ok(run(p).pending.some(x=>x.code==='UNMAPPED_PARAGRAPH'))});
+test('invalid anchor rejected',()=>{const p=plan();p.claims[0].anchor='not there';assert.throws(()=>run(p),/claim/)});
+test('canonical duplicate flagged',()=>{const p=plan();p.claims[1].proposition=p.claims[0].proposition;assert.ok(run(p).reviewItems.some(x=>x.type==='semantic'))});
+test('scope distinction preserved',()=>{const p=plan();p.claims[1].proposition=p.claims[0].proposition;p.claims[1].scope='June';assert.ok(!run(p).reviewItems.some(x=>x.type==='semantic'))});
+test('syndicated source roots collapse',()=>{const p=plan();p.sources.push({id:'s2',text:'Copy',locator:'fixture',parents:['s1']});p.claims[0].sources.push('s2');assert.deepEqual(run(p).graph[0].declaredRoots,['s1'])});
+test('missing contribution pending',()=>{const p=plan();p.contributions=[];assert.ok(run(p).pending.some(x=>x.code==='NO_DECLARED_ORIGINAL_CONTRIBUTION'))});
+test('stale review invalidated by source change',()=>{const p=approve(plan());p.sources[0].text+=' changed';assert.equal(run(p).status,'INCOMPLETE')});
+test('self review insufficient',()=>{const p=approve(plan());p.review.reviewer=p.review.author;assert.equal(run(p).status,'INCOMPLETE')});
+test('editor rejection blocks',()=>{const p=approve(plan());p.review.decision='rejected';assert.equal(run(p).status,'BLOCKED')});
+test('report verification',()=>{const p=plan();assert.equal(verify(text,p,rules,catalog,policy,run(p)).status,'VERIFIED')});
+test('tampered report rejected',()=>{const p=plan(),r=run(p);r.status='READY_FOR_RELEASE_REVIEW';assert.throws(()=>verify(text,p,rules,catalog,policy,r),/modified/)});

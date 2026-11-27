@@ -1,0 +1,17 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import {auditCompression as audit,verifyCompression} from '../src/editorial-compression.js';
+const f=()=>JSON.parse(fs.readFileSync(new URL('../examples/compression/input.json',import.meta.url)));const has=(r,c)=>r.blockers.some(x=>x.code===c);
+test('unreviewed compression incomplete',()=>assert.equal(audit(f()).status,'INCOMPLETE'));
+test('compression length',()=>assert.ok(audit(f()).length.after<audit(f()).length.before));
+test('missing mapping',()=>{const x=f();delete x.mapping.b;assert.ok(has(audit(x),'CLAIM_UNMAPPED'))});
+for(const key of ['scope','kind','polarity','modality'])test('drift '+key,()=>{const x=f();x.afterClaims[0][key]='changed';assert.ok(has(audit(x),'SCOPE_OR_MEANING_DRIFT'))});
+test('evidence lost',()=>{const x=f();x.afterClaims[0].evidence=[];assert.ok(has(audit(x),'EVIDENCE_REFERENCE_LOST'))});
+test('numeric change',()=>{const x=f();x.after=x.after.replace('20','21');x.afterClaims[0].anchor=x.afterClaims[0].anchor.replace('20','21');assert.ok(has(audit(x),'NUMERIC_LITERAL_LOST'))});
+test('unknown mapping',()=>{const x=f();x.mapping.z='a';assert.ok(has(audit(x),'UNKNOWN_MAPPING'))});
+test('new claim',()=>{const x=f();x.afterClaims.push({...x.afterClaims[0],id:'z'});assert.ok(has(audit(x),'NEW_CLAIM_REQUIRES_SEPARATE_EVIDENCE_AUDIT'))});
+test('duplicate candidate',()=>{const x=f();x.afterClaims.push({...x.afterClaims[0],id:'z'});assert.equal(audit(x).pairs.length,1)});
+test('section gain',()=>assert.equal(audit(f()).sections.sales.newDeclaredPropositions,1));
+test('qualification review',()=>{const x=f();x.after+=' It remains unknown. 尚未证实。';assert.ok(audit(x).pending.some(p=>p.code==='QUALIFICATION_CONSOLIDATION_REVIEW'))});
+test('bound review',()=>{const x=f();x.review={basis:audit(x).basis,author:'a',reviewer:'b',decisions:{a:{decision:'preserved',reason:'same claim'},b:{decision:'preserved',reason:'same claim'}}};assert.equal(audit(x).status,'READY_FOR_EDITORIAL_RELEASE_REVIEW');x.after+=' ';assert.equal(audit(x).status,'INCOMPLETE')});
+test('self review rejected',()=>{const x=f();x.review={basis:audit(x).basis,author:'a',reviewer:'a'};assert.equal(audit(x).status,'INCOMPLETE')});
+test('report verification',()=>assert.equal(verifyCompression(f(),audit(f())).status,'VERIFIED'));
+test('tampered report',()=>{const r=audit(f());r.status='READY';assert.throws(()=>verifyCompression(f(),r))});
