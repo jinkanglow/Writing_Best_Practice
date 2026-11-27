@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "5.1",
+  "documentHash": "3df2be926108464919e105a74b42e89fe59212b345c23cad77db5bc792470b4f",
+  "facts": [
+    {
+      "id": "financials",
+      "quote": "公司营收100亿元，毛利率20%。",
+      "tuple": {
+        "entity": "公司",
+        "metric": "营收",
+        "value": "100",
+        "unit": "亿元",
+        "period": "2026Q3",
+        "source": "",
+        "condition": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "5.3",
+  "documentHash": "3df2be926108464919e105a74b42e89fe59212b345c23cad77db5bc792470b4f",
+  "candidates": [
+    {
+      "id": "c1",
+      "startByte": 6,
+      "endByte": 12,
+      "quote": "营收",
+      "line": 1,
+      "context": "公司营收100亿元，毛利率20%。"
+    },
+    {
+      "id": "c2",
+      "startByte": 12,
+      "endByte": 21,
+      "quote": "100亿元",
+      "line": 1,
+      "context": "公司营收100亿元，毛利率20%。"
+    },
+    {
+      "id": "c3",
+      "startByte": 24,
+      "endByte": 33,
+      "quote": "毛利率",
+      "line": 1,
+      "context": "公司营收100亿元，毛利率20%。"
+    },
+    {
+      "id": "c4",
+      "startByte": 33,
+      "endByte": 36,
+      "quote": "20%",
+      "line": 1,
+      "context": "公司营收100亿元，毛利率20%。"
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "2.6",
+  "beforeHash": "7a7a7d6572448b914e36af37a213e2f2c62049343a0bca7550be7fee49dd8937",
+  "afterHash": "0941c30cc49a8a9425db2a04c43a1c2fde491ffb921b9bdfe350d026058f14f5",
+  "decisions": [
+    {
+      "id": "thesis-1",
+      "decision": "allow",
+      "reviewer": "example-editor",
+      "rationale": "Explicit editorial approval in synthetic demonstration",
+      "revisedQuote": "The central claim is that revenue declined."
+    }
+  ]
+}

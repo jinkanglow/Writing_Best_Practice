@@ -1,0 +1,38 @@
+[
+  {
+    "candidateId": "c1",
+    "action": "covered",
+    "factIds": [
+      "financials"
+    ],
+    "reviewer": "example-editor",
+    "rationale": "Example registration only"
+  },
+  {
+    "candidateId": "c2",
+    "action": "covered",
+    "factIds": [
+      "financials"
+    ],
+    "reviewer": "example-editor",
+    "rationale": "Example registration only"
+  },
+  {
+    "candidateId": "c3",
+    "action": "covered",
+    "factIds": [
+      "financials"
+    ],
+    "reviewer": "example-editor",
+    "rationale": "Example registration only"
+  },
+  {
+    "candidateId": "c4",
+    "action": "covered",
+    "factIds": [
+      "financials"
+    ],
+    "reviewer": "example-editor",
+    "rationale": "Example registration only"
+  }
+]

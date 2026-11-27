@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "id": "filing",
+      "uri": "https://example.org/fictional-filing",
+      "text": "2026Q3 公司营收100亿元。\n2026Q3 公司营收120亿元。"
+    }
+  ]
+}

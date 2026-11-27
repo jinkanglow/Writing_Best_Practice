@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "5.3",
+  "status": "READY_FOR_HUMAN_REVIEW",
+  "beforeHash": "3df2be926108464919e105a74b42e89fe59212b345c23cad77db5bc792470b4f",
+  "afterHash": "3df2be926108464919e105a74b42e89fe59212b345c23cad77db5bc792470b4f",
+  "factAuditHash": "130afaecaa8db332389ec909376bc57b7f5a336abf52f3f22d2c215378cd9001",
+  "attestationsHash": "65f0790a5074d0f41fc6e1d597efcb141fcb41500f3348ed730767bf0a37b400",
+  "beforeCoverage": {
+    "candidates": [
+      {
+        "id": "c1",
+        "startByte": 6,
+        "endByte": 12,
+        "quote": "营收",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      },
+      {
+        "id": "c2",
+        "startByte": 12,
+        "endByte": 21,
+        "quote": "100亿元",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      },
+      {
+        "id": "c3",
+        "startByte": 24,
+        "endByte": 33,
+        "quote": "毛利率",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      },
+      {
+        "id": "c4",
+        "startByte": 33,
+        "endByte": 36,
+        "quote": "20%",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      }
+    ],
+    "covered": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ],
+    "dismissed": [],
+    "pending": [],
+    "conflicts": [],
+    "coverageRate": 1
+  },
+  "afterCoverage": {
+    "candidates": [
+      {
+        "id": "c1",
+        "startByte": 6,
+        "endByte": 12,
+        "quote": "营收",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      },
+      {
+        "id": "c2",
+        "startByte": 12,
+        "endByte": 21,
+        "quote": "100亿元",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      },
+      {
+        "id": "c3",
+        "startByte": 24,
+        "endByte": 33,
+        "quote": "毛利率",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      },
+      {
+        "id": "c4",
+        "startByte": 33,
+        "endByte": 36,
+        "quote": "20%",
+        "line": 1,
+        "context": "公司营收100亿元，毛利率20%。"
+      }
+    ],
+    "covered": [
+      "c1",
+      "c2",
+      "c3",
+      "c4"
+    ],
+    "dismissed": [],
+    "pending": [],
+    "conflicts": [],
+    "coverageRate": 1
+  },
+  "blockers": [],
+  "pending": [],
+  "limitations": [
+    "Lexical candidates are not complete financial fact extraction",
+    "A dismissed candidate may still contain a material fact",
+    "Editor supplied tuples and attestations are not independent evidence",
+    "Markdown table cells are scanned but cross-line relationships are not reconstructed",
+    "Reviewer identity is not authenticated"
+  ],
+  "reportHash": "c65870a76914c7f36261d60094c278a0d8afa9257fbf82d3e6c2f13bed54d2df"
+}

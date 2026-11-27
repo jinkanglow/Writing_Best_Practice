@@ -1,0 +1,101 @@
+{
+  "legacy": {
+    "fusion": {
+      "draft": "He left the key. He knocked.",
+      "mode": "fiction",
+      "skills": [
+        {
+          "id": "p",
+          "role": "primary",
+          "content": "A change in trust"
+        },
+        {
+          "id": "s",
+          "role": "constraint",
+          "content": "Use concrete actions"
+        }
+      ],
+      "constraints": [
+        {
+          "id": "c",
+          "skillId": "s",
+          "kind": "style",
+          "rule": "Use action"
+        }
+      ],
+      "anchors": [
+        {
+          "id": "a",
+          "requirement": "Trust changes",
+          "translation": "Return key then knock",
+          "span": {
+            "start": 0,
+            "quote": "He left the key. He knocked."
+          },
+          "constraintIds": [
+            "c"
+          ]
+        }
+      ],
+      "conflicts": [],
+      "exceptions": [],
+      "units": [
+        {
+          "id": "u",
+          "anchorId": "a",
+          "span": {
+            "start": 0,
+            "quote": "He left the key."
+          },
+          "cause": "fear",
+          "effect": "distance",
+          "character": "he",
+          "before": "trust",
+          "after": "fear",
+          "motive": "avoid conflict"
+        },
+        {
+          "id": "v",
+          "anchorId": "a",
+          "span": {
+            "start": 17,
+            "quote": "He knocked."
+          },
+          "cause": "regret",
+          "effect": "contact",
+          "character": "he",
+          "before": "fear",
+          "after": "hope",
+          "motive": "repair"
+        }
+      ]
+    }
+  },
+  "directives": [
+    {
+      "id": "d1",
+      "skillId": "p",
+      "target": "action",
+      "scope": "*",
+      "action": "require"
+    },
+    {
+      "id": "d2",
+      "skillId": "s",
+      "target": "action",
+      "scope": "*",
+      "action": "require"
+    }
+  ],
+  "dependencies": [
+    {
+      "from": "u",
+      "to": "v",
+      "trigger": "He left the key.",
+      "payoff": "He knocked.",
+      "reason": "Synthetic bridge"
+    }
+  ],
+  "progression": [],
+  "exceptionReviews": []
+}

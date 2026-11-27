@@ -1,0 +1,48 @@
+{
+  "schemaVersion": "5.4",
+  "status": "READY_FOR_HUMAN_REVIEW",
+  "beforeHash": "9c43d1031b7df241cdc81a0fb5c3022cf0cda4587445143fec55441615aa0c90",
+  "afterHash": "5e34277136251b73d94a6e39626966ed9a56cd184c78cf6d79c08d137e19991f",
+  "sourceBundleHash": "52a12e54ec9b6b19f8f0dbed3e29a864dbb43787f9f70cf76ce64945f09186b3",
+  "beforeLinksHash": "99d47ea3b4434be08497313fcba6cf6efef323cc52b840acec6bad56a47a2c38",
+  "afterLinksHash": "60a53db203b7a3e3226aae361491111b4e159cb5daeb0491298a762644f24c51",
+  "factAuditHash": "7e455cda2f79b998c81fcb5e6d4ad5ba4e24521888ecbe3817d53c5645e085fb",
+  "beforeEvidence": {
+    "bound": [
+      {
+        "factId": "r",
+        "sourceId": "filing",
+        "sourceHash": "7290f7cac02e2177f0caf44dcc6429f72cc223c9d9e3be4c9cae08bb291d74bc",
+        "quoteHash": "9c43d1031b7df241cdc81a0fb5c3022cf0cda4587445143fec55441615aa0c90",
+        "startByte": 7,
+        "endByte": 31
+      }
+    ],
+    "pending": [],
+    "conflicts": []
+  },
+  "afterEvidence": {
+    "bound": [
+      {
+        "factId": "r",
+        "sourceId": "filing",
+        "sourceHash": "7290f7cac02e2177f0caf44dcc6429f72cc223c9d9e3be4c9cae08bb291d74bc",
+        "quoteHash": "5e34277136251b73d94a6e39626966ed9a56cd184c78cf6d79c08d137e19991f",
+        "startByte": 39,
+        "endByte": 63
+      }
+    ],
+    "pending": [],
+    "conflicts": []
+  },
+  "blockers": [],
+  "pending": [],
+  "limitations": [
+    "Exact literal value in a source excerpt does not prove factual correctness",
+    "Source text and URI are editor supplied, not independently authenticated",
+    "A quote can omit material context or refer to a different period",
+    "Reviewer identity is not authenticated",
+    "Cross-sentence relationships are not semantically reconstructed"
+  ],
+  "reportHash": "ba3f21c3732e12ae880d7421b676f20fa60a6d3f54ac19324d6597f4ee130eae"
+}

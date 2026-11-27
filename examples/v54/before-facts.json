@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "5.1",
+  "documentHash": "9c43d1031b7df241cdc81a0fb5c3022cf0cda4587445143fec55441615aa0c90",
+  "facts": [
+    {
+      "id": "r",
+      "quote": "公司营收100亿元。",
+      "tuple": {
+        "entity": "公司",
+        "metric": "营收",
+        "value": "100",
+        "unit": "亿元",
+        "period": "2026Q3",
+        "source": "example",
+        "condition": ""
+      }
+    }
+  ]
+}
