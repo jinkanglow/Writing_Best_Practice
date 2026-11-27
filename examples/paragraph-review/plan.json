@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "7.1",
+  "documentHash": "b8d5a0f6ff3ccba53cf3f9fd3f75b374c0cb0a624c0da8536f2c2a530dd79e33",
+  "profile": "analytical-nonfiction",
+  "status": "INCOMPLETE",
+  "paragraphs": [
+    {
+      "id": "p-1",
+      "startByte": 0,
+      "endByte": 42,
+      "hash": "6e229582e5f8d25d1a5533ac2d5fb68d4d65599b70df56a0da752f5448c4aab1",
+      "text": "营收增长并不必然提高利润率。",
+      "previousId": null,
+      "nextId": "p-2",
+      "questions": [
+        "Identify the new fact or mechanism, its evidence boundary, and the transition to the next claim.",
+        "What does this paragraph contribute that no adjacent paragraph already supplies?",
+        "What must remain unchanged if this paragraph is rewritten?"
+      ],
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "p-2",
+      "startByte": 44,
+      "endByte": 92,
+      "hash": "1689c534887108fad7b440f9392cda8a577cf90ed65f5b478f33b097c74193af",
+      "text": "成本和产品组合可能抵消收入增量。",
+      "previousId": "p-1",
+      "nextId": null,
+      "questions": [
+        "Identify the new fact or mechanism, its evidence boundary, and the transition to the next claim.",
+        "What does this paragraph contribute that no adjacent paragraph already supplies?",
+        "What must remain unchanged if this paragraph is rewritten?"
+      ],
+      "status": "REVIEW_REQUIRED"
+    }
+  ],
+  "limitations": [
+    "Paragraph segmentation is heuristic, not a full Markdown AST",
+    "Paragraph purpose and originality require human judgment"
+  ]
+}

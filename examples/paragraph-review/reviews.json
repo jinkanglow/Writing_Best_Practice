@@ -1,0 +1,20 @@
+[
+  {
+    "id": "p-1",
+    "decision": "KEEP",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative editorial review only",
+    "contribution": "Provides one distinct financial mechanism",
+    "transition": "Builds a causal distinction between revenue and margin",
+    "preservation": "Preserve all uncertainty and factual boundaries"
+  },
+  {
+    "id": "p-2",
+    "decision": "KEEP",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative editorial review only",
+    "contribution": "Provides one distinct financial mechanism",
+    "transition": "Builds a causal distinction between revenue and margin",
+    "preservation": "Preserve all uncertainty and factual boundaries"
+  }
+]

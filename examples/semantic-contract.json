@@ -1,0 +1,16 @@
+{
+  "version": "1.6",
+  "requirements": [
+    {
+      "id": "argument-mechanism",
+      "obligation": "must",
+      "value": "Explain a concrete mechanism",
+      "scope": [
+        "*"
+      ],
+      "check": {
+        "kind": "semantic_review"
+      }
+    }
+  ]
+}

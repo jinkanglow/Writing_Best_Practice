@@ -1,0 +1,21 @@
+{
+  "beforeHash": "8eda8db71debfc2706e0f97b8a2445e1740e3f2e2c1683a45a50adbca9a94fec",
+  "nodes": [
+    {
+      "id": "source",
+      "quote": "The source reports a decline in sales."
+    },
+    {
+      "id": "outlook",
+      "quote": "This evidence supports a cautious outlook."
+    }
+  ],
+  "edges": [
+    {
+      "id": "supports-outlook",
+      "from": "source",
+      "to": "outlook",
+      "kind": "supports"
+    }
+  ]
+}

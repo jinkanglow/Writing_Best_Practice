@@ -1,0 +1,8 @@
+[
+  {
+    "id": "revenue",
+    "action": "accept",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative only; not verified against an actual financial filing"
+  }
+]

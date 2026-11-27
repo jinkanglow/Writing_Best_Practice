@@ -1,0 +1,42 @@
+{
+  "schemaVersion": "7.1",
+  "documentHash": "810142730062a0fcacfb503b89644d715cc55eb7de0e836c1a66e57c15da3974",
+  "profile": "analytical-nonfiction",
+  "status": "INCOMPLETE",
+  "paragraphs": [
+    {
+      "id": "p-1",
+      "startByte": 0,
+      "endByte": 30,
+      "hash": "4dfb88ebfc6a408bb58de38cf8e8da1d5ea9092f28271486c6a8855d6c4e09f4",
+      "text": "第一段分析经营利润。",
+      "previousId": null,
+      "nextId": "p-2",
+      "questions": [
+        "Identify the new fact or mechanism, its evidence boundary, and the transition to the next claim.",
+        "What does this paragraph contribute that no adjacent paragraph already supplies?",
+        "What must remain unchanged if this paragraph is rewritten?"
+      ],
+      "status": "REVIEW_REQUIRED"
+    },
+    {
+      "id": "p-2",
+      "startByte": 32,
+      "endByte": 62,
+      "hash": "2c5bd5ecc0db386ea54b212f4b0ae2911b74226ea8a5d20847f2a69eb695122f",
+      "text": "第二段解释成本结构。",
+      "previousId": "p-1",
+      "nextId": null,
+      "questions": [
+        "Identify the new fact or mechanism, its evidence boundary, and the transition to the next claim.",
+        "What does this paragraph contribute that no adjacent paragraph already supplies?",
+        "What must remain unchanged if this paragraph is rewritten?"
+      ],
+      "status": "REVIEW_REQUIRED"
+    }
+  ],
+  "limitations": [
+    "Paragraph segmentation is heuristic, not a full Markdown AST",
+    "Paragraph purpose and originality require human judgment"
+  ]
+}

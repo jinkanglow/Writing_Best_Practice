@@ -1,0 +1,19 @@
+{
+  "schemaVersion": "5.1",
+  "documentHash": "c7f7eab4d6d954601097902068e28dd02835592076537d2876635a390c1e35b7",
+  "facts": [
+    {
+      "id": "revenue",
+      "quote": "联发科营收为120亿元。",
+      "tuple": {
+        "entity": "联发科",
+        "metric": "营收",
+        "value": "120",
+        "unit": "亿元",
+        "period": "2026Q3",
+        "source": "",
+        "condition": ""
+      }
+    }
+  ]
+}

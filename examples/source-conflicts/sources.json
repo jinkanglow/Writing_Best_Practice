@@ -1,0 +1,1 @@
+{"sources":[{"id":"filing-v1","documentId":"sample-report","kind":"primary-filing","version":"1","publishedAt":"2026-10-01"},{"id":"filing-v2","documentId":"sample-report","kind":"primary-filing","version":"2","publishedAt":"2026-10-10","supersedes":"filing-v1"}]}

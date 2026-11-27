@@ -1,0 +1,4 @@
+[
+  {"id":"reported","fact":{"entity":"Example Issuer","metric":"revenue","period":"2026Q3","unit":"USDm","condition":"reported","accountingBasis":"IFRS","consolidationScope":"group","measurementBasis":"gross","value":"100.25"}},
+  {"id":"adjusted","fact":{"entity":"Example Issuer","metric":"revenue","period":"2026Q3","unit":"USDm","condition":"adjusted","accountingBasis":"IFRS","consolidationScope":"group","measurementBasis":"gross","value":"120.50"}}
+]

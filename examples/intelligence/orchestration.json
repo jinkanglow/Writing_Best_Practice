@@ -1,0 +1,56 @@
+{
+  "text": "The sample shop sold 20 units in May.\n\nAt $5 per unit, sample revenue was $100.\n",
+  "plan": {
+    "version": 1,
+    "documentHash": "bb4eb91219ba0330084bfe193c081d98c376c21c59386e232d9d16298ec7b01f",
+    "profile": "financial-commentary",
+    "sources": [
+      {
+        "id": "s1",
+        "text": "Synthetic ledger: May, 20 units, $5 each.",
+        "locator": "Synthetic fixture, not real reporting",
+        "parents": []
+      }
+    ],
+    "claims": [
+      {
+        "id": "c1",
+        "line": 1,
+        "anchor": "20 units",
+        "proposition": "May unit sales were 20",
+        "scope": "sample shop May",
+        "kind": "fact",
+        "sources": [
+          "s1"
+        ]
+      },
+      {
+        "id": "c2",
+        "line": 3,
+        "anchor": "$100",
+        "proposition": "May revenue was 100 dollars",
+        "scope": "sample shop May",
+        "kind": "inference",
+        "sources": [
+          "s1"
+        ]
+      }
+    ],
+    "contributions": [
+      {
+        "id": "o1",
+        "kind": "calculation",
+        "method": "20 * 5",
+        "result": "100 dollars",
+        "artifact": "Synthetic ledger arithmetic",
+        "claims": [
+          "c2"
+        ],
+        "sources": [
+          "s1"
+        ]
+      }
+    ]
+  },
+  "evidence": {}
+}

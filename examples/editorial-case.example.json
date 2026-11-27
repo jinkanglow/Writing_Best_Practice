@@ -1,0 +1,15 @@
+{
+  "id": "case_one",
+  "origin": "real-redacted",
+  "category": "evidence",
+  "split": "development",
+  "groupId": "source-group-001",
+  "consentReference": "PRIVATE-CONSENT-REFERENCE",
+  "redactionReviewed": true,
+  "redactionReviewer": "privacy-reviewer-id",
+  "annotationGuideline": "1.0",
+  "annotationDate": "2026-11-20",
+  "input": {"text": "Redacted example statement.", "required": ["evidence"], "stages": {}},
+  "assignedReviewers": ["reviewer-a", "reviewer-b"],
+  "annotations": []
+}

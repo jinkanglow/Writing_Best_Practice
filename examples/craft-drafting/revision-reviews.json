@@ -1,0 +1,38 @@
+[
+  {
+    "stage": "intent",
+    "decision": "APPROVED",
+    "reviewer": "example-editor",
+    "rationale": "Example review only; not a substantive factual validation"
+  },
+  {
+    "stage": "outline",
+    "decision": "APPROVED",
+    "reviewer": "example-editor",
+    "rationale": "Example review only; not a substantive factual validation"
+  },
+  {
+    "stage": "draft",
+    "decision": "APPROVED",
+    "reviewer": "example-editor",
+    "rationale": "Example review only; not a substantive factual validation"
+  },
+  {
+    "stage": "structure",
+    "decision": "APPROVED",
+    "reviewer": "example-editor",
+    "rationale": "Example review only; not a substantive factual validation"
+  },
+  {
+    "stage": "line",
+    "decision": "APPROVED",
+    "reviewer": "example-editor",
+    "rationale": "Example review only; not a substantive factual validation"
+  },
+  {
+    "stage": "release",
+    "decision": "APPROVED",
+    "reviewer": "example-editor",
+    "rationale": "Example review only; not a substantive factual validation"
+  }
+]

@@ -1,0 +1,4 @@
+[
+  {"id":"fact-1","kind":"fact","quote":"Revenue rose 5%","anchorId":"revenue"},
+  {"id":"cause-1","kind":"causal_link","quote":"Demand caused the increase","anchorId":"causality"}
+]

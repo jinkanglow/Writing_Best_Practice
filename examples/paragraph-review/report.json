@@ -1,0 +1,23 @@
+{
+  "schemaVersion": "7.1",
+  "documentHash": "b8d5a0f6ff3ccba53cf3f9fd3f75b374c0cb0a624c0da8536f2c2a530dd79e33",
+  "planHash": "40e352d44b577325223b18ccc3b8de80c34c7a2561ad604fff1cb5e6099d6df2",
+  "reviewHash": "a085bc7491628b686f618fb6bafba4af38aa51607e943a4a1e8470cacb843dad",
+  "status": "REVIEW_COMPLETE",
+  "tasks": [
+    {
+      "id": "p-1",
+      "decision": "KEEP",
+      "reviewer": "example-editor"
+    },
+    {
+      "id": "p-2",
+      "decision": "KEEP",
+      "reviewer": "example-editor"
+    }
+  ],
+  "limitations": [
+    "REVIEW_COMPLETE records editorial decisions only; it does not establish factual correctness",
+    "Proposed edits are never automatically applied"
+  ]
+}

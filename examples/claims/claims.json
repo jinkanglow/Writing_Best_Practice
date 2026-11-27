@@ -1,0 +1,15 @@
+{
+  "beforeHash": "b8447503c0958122e7ab1d4bf34ea485382a5b678edd9f635450b80819caeb4c",
+  "claims": [
+    {
+      "id": "forecast-qualification",
+      "type": "qualification",
+      "quote": "价格可能上涨"
+    },
+    {
+      "id": "causal-caveat",
+      "type": "causal",
+      "quote": "这并不证明存在因果关系"
+    }
+  ]
+}

@@ -1,0 +1,116 @@
+[
+  {
+    "stage": "intent",
+    "decision": "PASS",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative review only, not verified factual assessment",
+    "quote": "营收增长10%",
+    "observation": "The passage distinguishes revenue and margin",
+    "ruleChecks": []
+  },
+  {
+    "stage": "outline",
+    "decision": "PASS",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative review only, not verified factual assessment",
+    "quote": "营收增长10%",
+    "observation": "The passage distinguishes revenue and margin",
+    "ruleChecks": [
+      {
+        "ruleId": "argument-progression",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      },
+      {
+        "ruleId": "reader-value",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      }
+    ]
+  },
+  {
+    "stage": "draft",
+    "decision": "PASS",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative review only, not verified factual assessment",
+    "quote": "营收增长10%",
+    "observation": "The passage distinguishes revenue and margin",
+    "ruleChecks": [
+      {
+        "ruleId": "evidence-boundary",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      }
+    ]
+  },
+  {
+    "stage": "structure",
+    "decision": "PASS",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative review only, not verified factual assessment",
+    "quote": "营收增长10%",
+    "observation": "The passage distinguishes revenue and margin",
+    "ruleChecks": [
+      {
+        "ruleId": "narrative-pace",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      },
+      {
+        "ruleId": "argument-progression",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      },
+      {
+        "ruleId": "counterexample",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      }
+    ]
+  },
+  {
+    "stage": "line",
+    "decision": "PASS",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative review only, not verified factual assessment",
+    "quote": "营收增长10%",
+    "observation": "The passage distinguishes revenue and margin",
+    "ruleChecks": [
+      {
+        "ruleId": "voice-rhythm",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      },
+      {
+        "ruleId": "syntax-control",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      }
+    ]
+  },
+  {
+    "stage": "release",
+    "decision": "PASS",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative review only, not verified factual assessment",
+    "quote": "营收增长10%",
+    "observation": "The passage distinguishes revenue and margin",
+    "ruleChecks": [
+      {
+        "ruleId": "revision-purpose",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      },
+      {
+        "ruleId": "evidence-boundary",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      },
+      {
+        "ruleId": "reader-value",
+        "decision": "PASS",
+        "rationale": "Illustrative editorial sign-off"
+      }
+    ]
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "version": "1.6",
+  "requirements": [
+    {
+      "id": "no-cliche",
+      "obligation": "must_not",
+      "value": "forbid the cliche in prose",
+      "scope": ["*"],
+      "check": {"kind": "literal", "text": "值得我们深思"}
+    }
+  ]
+}

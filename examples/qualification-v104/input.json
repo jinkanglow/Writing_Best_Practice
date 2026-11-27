@@ -1,0 +1,86 @@
+{
+  "context": {
+    "compression": {
+      "before": "May sales were 20 units.\n\nMay sales were 20 units.",
+      "after": "May sales were 20 units.",
+      "beforeClaims": [
+        {
+          "id": "a",
+          "proposition": "May sales were 20 units",
+          "scope": "sample shop May",
+          "kind": "fact",
+          "polarity": "positive",
+          "modality": "asserted",
+          "section": "sales",
+          "anchor": "May sales were 20 units",
+          "evidence": [
+            "synthetic-ledger:1"
+          ]
+        },
+        {
+          "id": "b",
+          "proposition": "May sales were 20 units",
+          "scope": "sample shop May",
+          "kind": "fact",
+          "polarity": "positive",
+          "modality": "asserted",
+          "section": "conclusion",
+          "anchor": "May sales were 20 units",
+          "evidence": [
+            "synthetic-ledger:1"
+          ]
+        }
+      ],
+      "afterClaims": [
+        {
+          "id": "a",
+          "proposition": "May sales were 20 units",
+          "scope": "sample shop May",
+          "kind": "fact",
+          "polarity": "positive",
+          "modality": "asserted",
+          "section": "sales",
+          "anchor": "May sales were 20 units",
+          "evidence": [
+            "synthetic-ledger:1"
+          ]
+        }
+      ],
+      "mapping": {
+        "a": "a",
+        "b": "a"
+      }
+    },
+    "contexts": {
+      "before": {
+        "a": {
+          "entity": "sample shop",
+          "period": "May",
+          "metric": "sales",
+          "unit": "units",
+          "condition": "all sales",
+          "relation": "observed"
+        },
+        "b": {
+          "entity": "sample shop",
+          "period": "May",
+          "metric": "sales",
+          "unit": "units",
+          "condition": "all sales",
+          "relation": "observed"
+        }
+      },
+      "after": {
+        "a": {
+          "entity": "sample shop",
+          "period": "May",
+          "metric": "sales",
+          "unit": "units",
+          "condition": "all sales",
+          "relation": "observed"
+        }
+      }
+    },
+    "qualifications": []
+  }
+}

@@ -1,0 +1,15 @@
+[
+  {
+    "id": "editor-example",
+    "sourceId": "editor-example",
+    "sourceHash": "e822f540bd2ad3d3fca089ae7d7dc0ff9a7ab8e5220a9066726fbbba8dbb1575",
+    "quote": "Example Issuer revenue adjustment for 2026Q3 is 20.25 USDm.",
+    "amount": "20.25",
+    "entity": "Example Issuer",
+    "metric": "revenue",
+    "period": "2026Q3",
+    "unit": "USDm",
+    "reviewer": "example-editor",
+    "rationale": "Illustrative only; not a real financial disclosure"
+  }
+]

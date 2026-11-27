@@ -1,0 +1,18 @@
+{
+  "schemaVersion": "7.2",
+  "beforeHash": "810142730062a0fcacfb503b89644d715cc55eb7de0e836c1a66e57c15da3974",
+  "afterHash": "1bec7001abe665a3c2bc97c1384c6c0bdc490640e9501cb9906f61c45bae6c1b",
+  "proposalHash": "484525f2726901aa1493283e735f09acba6ba84f0968d166127cecc021b23c2e",
+  "decisionsHash": "f06909818d34435674eef75a21b698626717075b6a77407601eff7efc30e7bce",
+  "status": "READY_FOR_INDEPENDENT_RECHECK",
+  "applied": [
+    "p-1"
+  ],
+  "rejected": [],
+  "pending": [],
+  "revisedText": "第一段分析经营利润的来源。\n\n第二段解释成本结构。\n",
+  "limitations": [
+    "No semantic equivalence guarantee",
+    "Independent fact, voice and final release checks remain required"
+  ]
+}

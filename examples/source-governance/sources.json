@@ -1,0 +1,14 @@
+{
+  "sources": [
+    {
+      "id": "filing",
+      "uri": "https://example.org/filing",
+      "text": "公司营收100亿元。公司营收120亿元。",
+      "kind": "primary-filing",
+      "version": "2026Q3-revision-1",
+      "retrievedAt": "2026-11-19",
+      "publishedAt": "2026-11-18",
+      "period": "2026Q3"
+    }
+  ]
+}

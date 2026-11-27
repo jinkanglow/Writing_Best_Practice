@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "7.2",
+  "documentHash": "810142730062a0fcacfb503b89644d715cc55eb7de0e836c1a66e57c15da3974",
+  "planHash": "103cc3bfdbf3ad9c403ccb4b6fe09045de77551519f54f2a88b972da1bf17966",
+  "reviewHash": "64588e7990c3d18a2f14f4db624312d212932eadef4f4aff7e6806203bcc4e5d",
+  "status": "NEEDS_APPROVAL",
+  "proposals": [
+    {
+      "id": "p-1",
+      "decision": "REVISE",
+      "patch": {
+        "documentHash": "810142730062a0fcacfb503b89644d715cc55eb7de0e836c1a66e57c15da3974",
+        "startOffset": 0,
+        "endOffset": 30,
+        "expectedTextHash": "4dfb88ebfc6a408bb58de38cf8e8da1d5ea9092f28271486c6a8855d6c4e09f4",
+        "replacementText": "第一段分析经营利润的来源。"
+      },
+      "reviewer": "editor-1",
+      "rationale": "Improve explanation",
+      "removalJustification": null,
+      "protectedChanges": [],
+      "status": "NEEDS_APPROVAL"
+    }
+  ],
+  "limitations": [
+    "Proposals are not automatically approved",
+    "Protected signals are lexical heuristics, not semantic equivalence",
+    "A successful patch is not editorial or factual release approval"
+  ]
+}

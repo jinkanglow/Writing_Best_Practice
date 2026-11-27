@@ -1,0 +1,1 @@
+[{"id":"revenue-original","sourceId":"filing-v1","fact":{"entity":"Example Corp","metric":"revenue","period":"2026Q3","unit":"USDm","condition":"reported","value":"100"}},{"id":"revenue-restated","sourceId":"filing-v2","fact":{"entity":"Example Corp","metric":"revenue","period":"2026Q3","unit":"USDm","condition":"reported","value":"120"}}]

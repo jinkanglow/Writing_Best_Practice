@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "primarySkill": "relationship-arc",
+  "constraintSkill": "character-specific-prose",
+  "anchors": [
+    {"id":"a1","requirement":"A character makes a small exception to an established habit","function":"Establish a credible change in intimacy"},
+    {"id":"a2","requirement":"The dark moment arises from both characters' coping habits","function":"Make the rupture causally earned"},
+    {"id":"a3","requirement":"Each character demonstrates a changed choice","function":"Close the arc through action"}
+  ],
+  "constraints": [
+    {"id":"c1","rule":"Avoid narrator declarations of character growth","enforcement":"review"},
+    {"id":"c2","rule":"Preserve dialogue natural to the speaker and scene","enforcement":"hard"}
+  ],
+  "translations": [
+    {"anchorId":"a1","scene":"After a late shift at the shared apartment","observableAction":"He leaves a dry towel where she can reach it without asking","causalPurpose":"He notices a need he previously ignored","constraintIds":["c1"]},
+    {"anchorId":"a2","scene":"At the hospital reception desk","observableAction":"He makes a decision without consulting her; she leaves before hearing his explanation","causalPurpose":"Control and avoidance jointly create the rupture","constraintIds":["c1","c2"]},
+    {"anchorId":"a3","scene":"At the records counter a week later","observableAction":"She requests the document instead of fleeing; he asks what help she wants","causalPurpose":"Reverses both earlier coping patterns","constraintIds":["c1","c2"]}
+  ],
+  "conflicts":[{"id":"x1","anchorId":"a3","constraintId":"c2","status":"resolved","resolution":"Allow a direct question in the character's established voice","rationale":"Dialogue advances the decision without becoming an authorial moral"}],
+  "transitions":[{"afterAnchorId":"a2","from":"trust","to":"doubt","questions":["Does removing the scene break the causal arc?","Could these actions belong to arbitrary characters?","Is the emotion legible through behavior rather than explanation?"]}]
+}

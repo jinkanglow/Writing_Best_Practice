@@ -1,0 +1,21 @@
+[
+  {
+    "id": "p-1",
+    "decision": "REVISE",
+    "reviewer": "editor-1",
+    "rationale": "Improve explanation",
+    "contribution": "Explains mechanism",
+    "transition": "Links to cost structure",
+    "preservation": "Keep all facts",
+    "proposedText": "第一段分析经营利润的来源。"
+  },
+  {
+    "id": "p-2",
+    "decision": "KEEP",
+    "reviewer": "editor-1",
+    "rationale": "Improve explanation",
+    "contribution": "Explains mechanism",
+    "transition": "Links to cost structure",
+    "preservation": "Keep all facts"
+  }
+]

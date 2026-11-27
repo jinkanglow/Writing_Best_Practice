@@ -1,0 +1,3 @@
+[
+  {"id":"revenue-bridge","fromId":"reported","toId":"adjusted","adjustments":[{"id":"adjustment-1","label":"Illustrative adjustment","reason":"Demonstration only; not a real accounting adjustment","evidenceId":"editor-example","amount":"20.25"}],"scopeMappingRationale":"Example transformation from reported to adjusted; not independently validated","reviewer":"example-editor","rationale":"Demonstration of arithmetic bridge, not factual verification"}
+]

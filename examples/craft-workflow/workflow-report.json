@@ -1,0 +1,89 @@
+{
+  "schemaVersion": "6.9",
+  "profile": "analytical-nonfiction",
+  "documentHash": "886defaf247491012d8a5ab6a6660668d3a226a206b9f56cc3a344bc9b545a20",
+  "briefHash": "c03142f4810545b3ef21faf57c85324e883e614ee816c9e11537dadc9291e0cf",
+  "rulePackHash": "19669bd25dc4b2399e48875a12ff50270d28c860a5f7313eba31ff7981003c27",
+  "reviewHash": "a9fa5b9be3638321ad5175b17273550eee532bb72eb59cba39689f53cc9ca8d5",
+  "status": "REVIEW_COMPLETE",
+  "tasks": [
+    {
+      "stage": "intent",
+      "index": 0,
+      "dependsOn": [],
+      "instruction": "Declare the intended reader, the central question, the intended change in understanding, and the factual boundary. Do not invent facts.",
+      "ruleIds": [],
+      "status": "REVIEW_COMPLETE"
+    },
+    {
+      "stage": "outline",
+      "index": 1,
+      "dependsOn": [
+        "intent"
+      ],
+      "instruction": "Map the argument or story as consequential units. Each unit needs a function and an expected change; no compulsory fiction beat template.",
+      "ruleIds": [
+        "argument-progression",
+        "reader-value"
+      ],
+      "status": "REVIEW_COMPLETE"
+    },
+    {
+      "stage": "draft",
+      "index": 2,
+      "dependsOn": [
+        "outline"
+      ],
+      "instruction": "Write complete passages from the outline. Preserve viewpoint and factual provenance; do not insert invented quotations or evidence.",
+      "ruleIds": [
+        "evidence-boundary"
+      ],
+      "status": "REVIEW_COMPLETE"
+    },
+    {
+      "stage": "structure",
+      "index": 3,
+      "dependsOn": [
+        "draft"
+      ],
+      "instruction": "Reorder, cut, or expand units only when the causal chain, reader understanding, or scene consequence improves.",
+      "ruleIds": [
+        "narrative-pace",
+        "argument-progression",
+        "counterexample"
+      ],
+      "status": "REVIEW_COMPLETE"
+    },
+    {
+      "stage": "line",
+      "index": 4,
+      "dependsOn": [
+        "structure"
+      ],
+      "instruction": "Edit syntax, cadence, diction and repetition without altering assertions, hedges, attribution, quantities, or narrative knowledge.",
+      "ruleIds": [
+        "voice-rhythm",
+        "syntax-control"
+      ],
+      "status": "REVIEW_COMPLETE"
+    },
+    {
+      "stage": "release",
+      "index": 5,
+      "dependsOn": [
+        "line"
+      ],
+      "instruction": "Review the finished document against the initial intent, provenance and unresolved editorial questions. Approval is human and separate from automated checks.",
+      "ruleIds": [
+        "revision-purpose",
+        "evidence-boundary",
+        "reader-value"
+      ],
+      "status": "REVIEW_COMPLETE"
+    }
+  ],
+  "limitations": [
+    "REVIEW_COMPLETE only means human checks were recorded for the exact document version",
+    "Review identity and the truth of observations are not independently authenticated"
+  ]
+}

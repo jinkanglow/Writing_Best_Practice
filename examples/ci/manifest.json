@@ -1,0 +1,5 @@
+{
+  "profile": "analytical-nonfiction",
+  "required": ["coherence"],
+  "stages": {"coherence": {"entries": []}}
+}
