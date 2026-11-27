@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "9.0",
+  "assignments": [
+    {
+      "caseId": "missing_evidence_gate",
+      "split": "development",
+      "groupId": "missing_evidence_gate",
+      "annotations": [
+        {
+          "annotator": "reviewer-a",
+          "label": "ISSUE",
+          "rationale": "Independent annotation of this synthetic example."
+        },
+        {
+          "annotator": "reviewer-b",
+          "label": "ISSUE",
+          "rationale": "Second independent annotation of the same example."
+        }
+      ]
+    },
+    {
+      "caseId": "missing_coherence_gate",
+      "split": "development",
+      "groupId": "missing_coherence_gate",
+      "annotations": [
+        {
+          "annotator": "reviewer-a",
+          "label": "ISSUE",
+          "rationale": "Independent annotation of this synthetic example."
+        },
+        {
+          "annotator": "reviewer-b",
+          "label": "ISSUE",
+          "rationale": "Second independent annotation of the same example."
+        }
+      ]
+    },
+    {
+      "caseId": "missing_structure_gate",
+      "split": "development",
+      "groupId": "missing_structure_gate",
+      "annotations": [
+        {
+          "annotator": "reviewer-a",
+          "label": "ISSUE",
+          "rationale": "Independent annotation of this synthetic example."
+        },
+        {
+          "annotator": "reviewer-b",
+          "label": "ISSUE",
+          "rationale": "Second independent annotation of the same example."
+        }
+      ]
+    },
+    {
+      "caseId": "invalid_evidence_input",
+      "split": "holdout",
+      "groupId": "invalid_evidence_input",
+      "annotations": [
+        {
+          "annotator": "reviewer-a",
+          "label": "ISSUE",
+          "rationale": "Independent annotation of this synthetic example."
+        },
+        {
+          "annotator": "reviewer-b",
+          "label": "ISSUE",
+          "rationale": "Second independent annotation of the same example."
+        }
+      ]
+    },
+    {
+      "caseId": "missing_legacy_gate",
+      "split": "holdout",
+      "groupId": "missing_legacy_gate",
+      "annotations": [
+        {
+          "annotator": "reviewer-a",
+          "label": "ISSUE",
+          "rationale": "Independent annotation of this synthetic example."
+        },
+        {
+          "annotator": "reviewer-b",
+          "label": "ISSUE",
+          "rationale": "Second independent annotation of the same example."
+        }
+      ]
+    }
+  ],
+  "thresholds": {
+    "minHoldoutCases": 2,
+    "minRealHoldoutCases": 1,
+    "maxFalsePositiveRate": 0.1,
+    "minRecall": 0.9
+  }
+}

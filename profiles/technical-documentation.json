@@ -1,0 +1,27 @@
+{
+  "id": "technical-documentation",
+  "genre": "technical-documentation",
+  "style": "precise-instructions",
+  "antiSlop": "contextual-review",
+  "hardBlocks": [
+    "fabricated_fact",
+    "fabricated_quote",
+    "unresolved_mandatory_anchor"
+  ],
+  "humanReview": [
+    "semantic_repetition",
+    "authentic_voice",
+    "narrative_causality"
+  ],
+  "exceptions": [
+    "quoted_text",
+    "code",
+    "documented_technical_term"
+  ],
+  "evidenceRequired": false,
+  "originalityReview": {
+    "reference": "references/original-reporting-and-argument.md",
+    "semanticReviewRequired": true,
+    "publisherPolicyCheckRequiredForSubmission": true
+  }
+}

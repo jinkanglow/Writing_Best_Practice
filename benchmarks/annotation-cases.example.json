@@ -1,0 +1,14 @@
+[
+  {
+    "id": "case-001",
+    "category": "zh-financial-commentary",
+    "ruleId": "CAUSAL-002",
+    "text": "利润率下降五个百分点，证明定价权已经崩溃。"
+  },
+  {
+    "id": "case-002",
+    "category": "en-fiction",
+    "ruleId": "POV-001",
+    "text": "He looked out the window."
+  }
+]

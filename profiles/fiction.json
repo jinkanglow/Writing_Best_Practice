@@ -1,0 +1,1 @@
+{"id":"fiction","required":["character_consistency","scene_purpose","causal_continuity"],"allowIntentionalRepetition":true,"allowPointOfViewShifts":true,"semanticVerification":"human_or_external_adapter_required"}

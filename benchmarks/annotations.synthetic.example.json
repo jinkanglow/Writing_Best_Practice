@@ -1,0 +1,30 @@
+[
+  {
+    "id": "case-001",
+    "annotator": "reviewer-a",
+    "label": "violation",
+    "rationale": "Synthetic demonstration only; not a real independent human judgment",
+    "textSha256": "c00a70d4ec96f8795e5f68dc343eeb09971b329d287af78804a8050089ae7e37"
+  },
+  {
+    "id": "case-001",
+    "annotator": "reviewer-b",
+    "label": "violation",
+    "rationale": "Synthetic demonstration only; not a real independent human judgment",
+    "textSha256": "c00a70d4ec96f8795e5f68dc343eeb09971b329d287af78804a8050089ae7e37"
+  },
+  {
+    "id": "case-002",
+    "annotator": "reviewer-a",
+    "label": "no_violation",
+    "rationale": "Synthetic demonstration only; not a real independent human judgment",
+    "textSha256": "780be1179ca0fe9b93865df0af6f9af59c563078fa43f65c08d6aff0c03cd1df"
+  },
+  {
+    "id": "case-002",
+    "annotator": "reviewer-b",
+    "label": "no_violation",
+    "rationale": "Synthetic demonstration only; not a real independent human judgment",
+    "textSha256": "780be1179ca0fe9b93865df0af6f9af59c563078fa43f65c08d6aff0c03cd1df"
+  }
+]

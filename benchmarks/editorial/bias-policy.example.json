@@ -1,0 +1,6 @@
+{
+  "schemaVersion": "9.3",
+  "nearDuplicateThreshold": 0.85,
+  "minReviewerPairs": 10,
+  "maxReviewerPositiveRateGap": 0.2
+}

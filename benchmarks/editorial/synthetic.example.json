@@ -1,0 +1,106 @@
+{
+  "schemaVersion": "8.9",
+  "cases": [
+    {
+      "id": "missing_evidence_gate",
+      "origin": "synthetic",
+      "category": "evidence",
+      "input": {
+        "text": "Revenue rose by 12%.",
+        "required": [
+          "evidence"
+        ],
+        "stages": {}
+      },
+      "gold": {
+        "label": "ISSUE",
+        "rationale": "Required evidence stage is missing from the supplied release manifest.",
+        "annotator": "fixture-author",
+        "expectedCodes": [
+          "STAGE_INPUT_MISSING"
+        ]
+      }
+    },
+    {
+      "id": "missing_coherence_gate",
+      "origin": "synthetic",
+      "category": "coherence",
+      "input": {
+        "text": "The mechanism needs explanation.",
+        "required": [
+          "coherence"
+        ],
+        "stages": {}
+      },
+      "gold": {
+        "label": "ISSUE",
+        "rationale": "Required coherence stage has not been submitted for review.",
+        "annotator": "fixture-author",
+        "expectedCodes": [
+          "STAGE_INPUT_MISSING"
+        ]
+      }
+    },
+    {
+      "id": "missing_structure_gate",
+      "origin": "synthetic",
+      "category": "structure",
+      "input": {
+        "text": "First premise. Second premise.",
+        "required": [
+          "coherence",
+          "structure"
+        ],
+        "stages": {}
+      },
+      "gold": {
+        "label": "ISSUE",
+        "rationale": "Required structure stage is absent; the release gate must not pass.",
+        "annotator": "fixture-author"
+      }
+    },
+    {
+      "id": "invalid_evidence_input",
+      "origin": "synthetic",
+      "category": "evidence",
+      "input": {
+        "text": "This change caused the result.",
+        "required": [
+          "evidence"
+        ],
+        "stages": {
+          "evidence": {
+            "records": []
+          }
+        }
+      },
+      "gold": {
+        "label": "ISSUE",
+        "rationale": "The supplied evidence stage lacks the required valid review inputs.",
+        "annotator": "fixture-author",
+        "expectedCodes": [
+          "INVALID_STAGE_INPUT"
+        ]
+      }
+    },
+    {
+      "id": "missing_legacy_gate",
+      "origin": "synthetic",
+      "category": "release",
+      "input": {
+        "text": "The evidence is limited.",
+        "required": [],
+        "stages": {},
+        "requireLegacy": true
+      },
+      "gold": {
+        "label": "ISSUE",
+        "rationale": "Legacy final gate is required but its input has not been supplied.",
+        "annotator": "fixture-author",
+        "expectedCodes": [
+          "NO_REQUIRED_STAGES"
+        ]
+      }
+    }
+  ]
+}

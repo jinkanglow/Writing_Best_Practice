@@ -1,0 +1,14 @@
+{
+  "schemaVersion":"1",
+  "provenance":"synthetic",
+  "description":"Illustrative hand-labeled lexical edit cases, not a real-world corpus",
+  "cases":[
+    {"id":"number-change","before":"值得我们深思，收入增长10%。","targetQuote":"值得我们深思","replacement":"收入增长20%","expected":["number"]},
+    {"id":"qualifier-loss","before":"值得我们深思，可能继续下降。","targetQuote":"值得我们深思","replacement":"可能","expected":["qualifier"]},
+    {"id":"causal-addition","before":"值得我们深思，利率下降。","targetQuote":"值得我们深思","replacement":"因为利率下降","expected":["causal"]},
+    {"id":"attribution-addition","before":"值得我们深思，价格上升。","targetQuote":"值得我们深思","replacement":"报告显示","expected":["attribution"]},
+    {"id":"date-change","before":"值得我们深思，市场变化。","targetQuote":"值得我们深思","replacement":"2026年11月","expected":["date","number"]},
+    {"id":"style-only","before":"值得我们深思，市场变化。","targetQuote":"值得我们深思","replacement":"具体而言","expected":[]},
+    {"id":"uncaught-entity","before":"值得我们深思，市场变化。","targetQuote":"值得我们深思","replacement":"联发科","expected":[]}
+  ]
+}

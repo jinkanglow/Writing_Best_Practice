@@ -1,0 +1,3 @@
+# Paired revision evaluation
+
+Status: NOT_VALIDATED. The executable example is synthetic, not real reporting. Use the existing blind-review protocol for real drafts. Freeze source documents and before/after texts, assign anonymous randomized labels, obtain two independent ratings, and retain disagreements. Evaluate preservation of material facts, causal direction, scope, necessary caveats, original contribution, and section-level novelty before comparing length. Report paired regressions and missing ratings. Do not infer editorial quality from compression ratio or automated test counts. No independent ratings are included.

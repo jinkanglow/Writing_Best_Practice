@@ -1,0 +1,17 @@
+name: Release Evidence Check
+on:
+  push:
+  pull_request:
+jobs:
+  example-release-evidence:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm run check
+      - run: |
+          node bin/writing-quality.js revision coverage --before examples/release/original.md --anchors examples/release/anchors.json --inventory examples/release/inventory.json
+          node bin/writing-quality.js revision bundle --before examples/release/original.md --after examples/release/revised.md --anchors examples/release/anchors.json --inventory examples/release/inventory.json --output /tmp/release-evidence.json
+          node bin/writing-quality.js revision bundle-verify --bundle /tmp/release-evidence.json

@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "9.2",
+  "minPerSplit": 10,
+  "minPerLabel": 3,
+  "minPerCategory": 2,
+  "requiredCategories": ["evidence", "coherence", "structure", "release"],
+  "minPaired": 20,
+  "minAgreement": 0.8
+}

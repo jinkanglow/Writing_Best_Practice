@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "4.8",
+  "datasetHash": "8f2bc5e353ed53d3c301130972713d32ebf9fb97ef87cb54baf0f89679acfc19",
+  "provenance": "synthetic",
+  "caseCount": 7,
+  "context": "cn-explanatory",
+  "voice": "chinese-explanatory",
+  "metrics": {
+    "tp": 6,
+    "fp": 0,
+    "fn": 0,
+    "tn": 29,
+    "precision": 1,
+    "recall": 1,
+    "perCategory": {
+      "number": {
+        "tp": 2,
+        "fp": 0,
+        "fn": 0,
+        "tn": 5,
+        "precision": 1,
+        "recall": 1
+      },
+      "qualifier": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 6,
+        "precision": 1,
+        "recall": 1
+      },
+      "causal": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 6,
+        "precision": 1,
+        "recall": 1
+      },
+      "attribution": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 6,
+        "precision": 1,
+        "recall": 1
+      },
+      "date": {
+        "tp": 1,
+        "fp": 0,
+        "fn": 0,
+        "tn": 6,
+        "precision": 1,
+        "recall": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "id": "number-change",
+      "expected": [
+        "number"
+      ],
+      "predicted": [
+        "number"
+      ],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "017d48532c50bbd0a48cb4b37faf3c45fe446f33fc0d0c583f863314ab1da3f5",
+      "afterHash": "7017b9d7527bfad48d4b6b50ddfcfb24c6409465487c20d2e09d4f2fb9067f36"
+    },
+    {
+      "id": "qualifier-loss",
+      "expected": [
+        "qualifier"
+      ],
+      "predicted": [
+        "qualifier"
+      ],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "b566908175250a54b3938002425c4423f59fb7a3d9d460c6052236be5a56fe22",
+      "afterHash": "092f4a70f42832acdf3c4cca90deea9f846eaee35b7b3436f153013c3cf34b0d"
+    },
+    {
+      "id": "causal-addition",
+      "expected": [
+        "causal"
+      ],
+      "predicted": [
+        "causal"
+      ],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "b19c7be06145a30585888065e570cc60df98e4cc290861d947abd809486f9a95",
+      "afterHash": "35ff95b889642849ed40c7bb1fb72468b6811cc12e797809805b415c74e7e98e"
+    },
+    {
+      "id": "attribution-addition",
+      "expected": [
+        "attribution"
+      ],
+      "predicted": [
+        "attribution"
+      ],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "ab62575af6c3d2f759e78435511720d1887210c65b9bb7a18d817d09e9a9784a",
+      "afterHash": "35abe8b38fc7a32014cb3679b7f5468e77cb9a8acbcf8d4d1cb14bacf7ff2ad5"
+    },
+    {
+      "id": "date-change",
+      "expected": [
+        "date",
+        "number"
+      ],
+      "predicted": [
+        "date",
+        "number"
+      ],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "aa10bb3c96feeaba85e74022a9caa637767fac7941102e284472d738088b22e6",
+      "afterHash": "133681723a84542455a1608d4b3e9f7e551595b48f878f58e151cc4f118cc341"
+    },
+    {
+      "id": "style-only",
+      "expected": [],
+      "predicted": [],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "aa10bb3c96feeaba85e74022a9caa637767fac7941102e284472d738088b22e6",
+      "afterHash": "3b436b8e09834a1aef963f08ba5c4a1fed4789a0c1cfae0c9707fb64b3b67a1a"
+    },
+    {
+      "id": "uncaught-entity",
+      "expected": [],
+      "predicted": [],
+      "missing": [],
+      "extra": [],
+      "beforeHash": "aa10bb3c96feeaba85e74022a9caa637767fac7941102e284472d738088b22e6",
+      "afterHash": "98f2b10f4145ce82c78c71c7f57b9f0cc3a2cfb223549fc57e81af2302e30659"
+    }
+  ],
+  "limitations": [
+    "Benchmark labels are supplied, not independently verified",
+    "Synthetic results cannot establish real-world false-positive rates",
+    "A lexical category hit does not establish semantic change",
+    "Cases are conditional on a valid Avoid AI revision task"
+  ],
+  "reportHash": "455443cee7a845195e2997e5d466fadf5a17a854930a2303719f9244eb2e9f6c"
+}

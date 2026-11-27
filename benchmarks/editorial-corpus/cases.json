@@ -1,0 +1,4 @@
+[
+ {"id":"qualifier-example","before":"值得我们深思，可能下降。","targetQuote":"值得我们深思","replacement":"必然下降","source":"constructed-example"},
+ {"id":"number-example","before":"值得我们深思，收入增加。","targetQuote":"值得我们深思","replacement":"增长20%","source":"constructed-example"}
+]

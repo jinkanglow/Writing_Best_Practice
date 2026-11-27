@@ -1,0 +1,5 @@
+{"id":"en-1","category":"english-editorial","gold":"violation","prediction":"violation"}
+{"id":"en-2","category":"english-editorial","gold":"no_violation","prediction":"no_violation"}
+{"id":"en-3","category":"english-editorial","gold":"no_violation","prediction":"violation"}
+{"id":"zh-1","category":"chinese-editorial","gold":"violation","prediction":"abstain"}
+{"id":"zh-2","category":"chinese-editorial","gold":"violation","prediction":"no_violation"}

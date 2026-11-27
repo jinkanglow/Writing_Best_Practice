@@ -1,0 +1,22 @@
+{
+  "id": "personal-message",
+  "genre": "personal-message",
+  "style": "voice-matched",
+  "antiSlop": "contextual-review",
+  "hardBlocks": [
+    "fabricated_fact",
+    "fabricated_quote",
+    "unresolved_mandatory_anchor"
+  ],
+  "humanReview": [
+    "semantic_repetition",
+    "authentic_voice",
+    "narrative_causality"
+  ],
+  "exceptions": [
+    "quoted_text",
+    "code",
+    "documented_technical_term"
+  ],
+  "evidenceRequired": false
+}

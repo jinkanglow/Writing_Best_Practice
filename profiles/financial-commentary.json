@@ -1,0 +1,17 @@
+{
+  "id": "financial-commentary",
+  "required": [
+    "thesis",
+    "evidence",
+    "causal_mechanism",
+    "counterargument",
+    "limitations"
+  ],
+  "semanticVerification": "human_or_external_adapter_required",
+  "prohibitFabricatedEvidence": true,
+  "originalityReview": {
+    "reference": "references/original-reporting-and-argument.md",
+    "semanticReviewRequired": true,
+    "publisherPolicyCheckRequiredForSubmission": true
+  }
+}

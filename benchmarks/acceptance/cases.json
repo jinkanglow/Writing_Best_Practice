@@ -1,0 +1,11 @@
+[
+  {"id":"missing_coherence","kind":"release","input":{"text":"Revenue rose by 12%. The claim requires review.","required":["coherence"],"stages":{}},"expect":{"status":"INCOMPLETE","codes":["STAGE_INPUT_MISSING"]}},
+  {"id":"unreviewed_coherence","kind":"release","input":{"text":"Revenue rose by 12%. The claim requires review.","required":["coherence"],"stages":{"coherence":{"entries":[]}}},"expect":{"status":"INCOMPLETE","codes":["STAGE_NOT_READY"]}},
+  {"id":"missing_legacy","kind":"release","input":{"text":"The evidence is limited.","required":["coherence"],"stages":{},"requireLegacy":true},"expect":{"status":"INCOMPLETE","codes":["STAGE_INPUT_MISSING"]}},
+  {"id":"missing_evidence","kind":"release","input":{"text":"This change caused the result.","required":["evidence"],"stages":{}},"expect":{"status":"INCOMPLETE","codes":["STAGE_INPUT_MISSING"]}},
+  {"id":"invalid_evidence","kind":"release","input":{"text":"This change caused the result.","required":["evidence"],"stages":{"evidence":{"records":[]}}},"expect":{"status":"BLOCKED","codes":["INVALID_STAGE_INPUT"]}},
+  {"id":"paragraph_change","kind":"paragraph-impact","before":"First.\n\nSecond.\n\nThird.","after":"First.\n\nRevised.\n\nThird.","expect":{"changedOld":[2],"changedNew":[2],"affected":[1,2,3]}},
+  {"id":"paragraph_insertion","kind":"paragraph-impact","before":"First.\n\nThird.","after":"First.\n\nInserted.\n\nThird.","expect":{"changedOld":[],"changedNew":[2],"affected":[1,2,3]}},
+  {"id":"paragraph_deletion","kind":"paragraph-impact","before":"First.\n\nRemoved.\n\nThird.","after":"First.\n\nThird.","expect":{"changedOld":[2],"changedNew":[],"affected":[1,2]}},
+  {"id":"paragraph_unchanged","kind":"paragraph-impact","before":"First.\n\nSecond.","after":"First.\n\nSecond.","expect":{"changedOld":[],"changedNew":[],"affected":[]}}
+]

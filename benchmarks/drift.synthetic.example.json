@@ -1,0 +1,38 @@
+[
+  {
+    "id": "demo-1",
+    "kind": "thesis_reversal",
+    "before": "Costs are increasing.",
+    "after": "Costs are decreasing.",
+    "gold": "violation",
+    "goldEvidence": {
+      "side": "after",
+      "quote": "decreasing"
+    },
+    "annotation": {
+      "method": "independent_consensus",
+      "reviewers": [
+        "synthetic-a",
+        "synthetic-b"
+      ]
+    }
+  },
+  {
+    "id": "demo-2",
+    "kind": "fact_removal",
+    "before": "Revenue was 10.",
+    "after": "Revenue was 10.",
+    "gold": "no_violation",
+    "goldEvidence": {
+      "side": "after",
+      "quote": "Revenue"
+    },
+    "annotation": {
+      "method": "independent_consensus",
+      "reviewers": [
+        "synthetic-a",
+        "synthetic-b"
+      ]
+    }
+  }
+]

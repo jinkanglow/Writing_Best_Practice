@@ -1,0 +1,6 @@
+[
+ {"caseId":"qualifier-example","reviewer":"reviewer-a","labels":["qualifier"],"rationale":"Prediction qualifier introduced"},
+ {"caseId":"qualifier-example","reviewer":"reviewer-b","labels":["qualifier"],"rationale":"Qualifying language changed"},
+ {"caseId":"number-example","reviewer":"reviewer-a","labels":["number"],"rationale":"Percentage added"},
+ {"caseId":"number-example","reviewer":"reviewer-b","labels":[],"rationale":"Disputed whether number category applies"}
+]

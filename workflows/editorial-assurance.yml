@@ -1,0 +1,57 @@
+name: Editorial Reproducibility Assurance
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  reproducibility:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        node: [20, 22]
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm run check
+      - run: npm run production:smoke
+      - run: npm run production:pack
+      - name: Verify editorial acceptance regression fixtures
+        run: npm run editorial:regression
+      - name: Verify full and incremental equivalence
+        if: runner.os == 'Linux'
+        # The demonstration is intentionally INCOMPLETE: it has no human approvals.
+        # Exit 4 is expected; parity/invalidation failures exit 2 and must fail CI.
+        shell: bash
+        run: |
+          set +e
+          node scripts/editorial-ci.js --file examples/ci/article.md --manifest examples/ci/manifest.json --output editorial-assurance.json
+          result=$?
+          set -e
+          test "$result" -eq 4
+          node -e "const fs=require('fs');const r=JSON.parse(fs.readFileSync('editorial-assurance.json'));if(r.decision!=='INCOMPLETE'||Object.values(r.checks).some(x=>x!==true))process.exit(1)"
+      - name: Produce actionable editorial diagnostics
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set +e
+          node scripts/editorial-diagnostics.js --file examples/ci/article.md --manifest examples/ci/manifest.json --output editorial-diagnostics.json --markdown editorial-diagnostics.md --github true
+          result=$?
+          set -e
+          test "$result" -eq 4
+          cat editorial-diagnostics.md >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        if: always() && runner.os == 'Linux'
+        with:
+          name: editorial-assurance-evidence
+          path: |
+            editorial-assurance.json
+            editorial-regression.json
+            editorial-diagnostics.json
+            editorial-diagnostics.md
+          if-no-files-found: error

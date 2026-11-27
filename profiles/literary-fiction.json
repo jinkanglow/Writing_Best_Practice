@@ -1,0 +1,22 @@
+{
+  "id": "literary-fiction",
+  "genre": "literary-fiction",
+  "style": "voice-and-scene",
+  "antiSlop": "contextual-review",
+  "hardBlocks": [
+    "fabricated_fact",
+    "fabricated_quote",
+    "unresolved_mandatory_anchor"
+  ],
+  "humanReview": [
+    "semantic_repetition",
+    "authentic_voice",
+    "narrative_causality"
+  ],
+  "exceptions": [
+    "quoted_text",
+    "code",
+    "documented_technical_term"
+  ],
+  "evidenceRequired": false
+}

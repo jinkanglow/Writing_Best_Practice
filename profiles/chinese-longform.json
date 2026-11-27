@@ -1,0 +1,27 @@
+{
+  "id": "chinese-longform",
+  "genre": "chinese-longform",
+  "style": "mechanism-first",
+  "antiSlop": "contextual-review",
+  "hardBlocks": [
+    "fabricated_fact",
+    "fabricated_quote",
+    "unresolved_mandatory_anchor"
+  ],
+  "humanReview": [
+    "semantic_repetition",
+    "authentic_voice",
+    "narrative_causality"
+  ],
+  "exceptions": [
+    "quoted_text",
+    "code",
+    "documented_technical_term"
+  ],
+  "evidenceRequired": true,
+  "originalityReview": {
+    "reference": "references/original-reporting-and-argument.md",
+    "semanticReviewRequired": true,
+    "publisherPolicyCheckRequiredForSubmission": true
+  }
+}
