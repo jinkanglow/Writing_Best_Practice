@@ -1,0 +1,3 @@
+import fs from 'node:fs';import {runEditorial,verifyEditorial,executeBenchmark} from '../src/editorial-runtime.js';
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
+try{const [cmd,file,policyFile,report]=process.argv.slice(2),input=read(file),policy=read(policyFile);const r=cmd==='audit'?await runEditorial(input,policy):cmd==='verify'?await verifyEditorial(input,policy,read(report)):cmd==='benchmark'?executeBenchmark(input,policy.registry,policy.at):(()=>{throw Error('Unknown command')})();console.log(JSON.stringify(r,null,2));process.exitCode=r.status==='BLOCKED'?4:r.status==='INCOMPLETE'?3:0;}catch(e){console.error(e.message);process.exitCode=2;}

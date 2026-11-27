@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+import fs from 'node:fs';
+import {auditEditorialIntelligence,verifyEditorialIntelligence} from '../src/editorial-intelligence.js';
+const [cmd,...args]=process.argv.slice(2);const opt=k=>args.includes('--'+k)?args[args.indexOf('--'+k)+1]:null;const read=f=>fs.readFileSync(f,'utf8');const json=f=>JSON.parse(read(f));const rule=f=>json(new URL('../rules/'+f,import.meta.url));
+try{if(!['audit','verify'].includes(cmd)||!opt('file')||!opt('plan'))throw Error('Usage: audit|verify --file draft.md --plan plan.json [--output report.json | --report report.json]');const inputs=[read(opt('file')),json(opt('plan')),rule('editorial-originality.json'),rule('anti-slop-catalog.json'),rule('editorial-intelligence.json')];const result=cmd==='audit'?auditEditorialIntelligence(...inputs):verifyEditorialIntelligence(...inputs,json(opt('report')));if(opt('output'))fs.writeFileSync(opt('output'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result,null,2));if(['BLOCKED','INCOMPLETE'].includes(result.status))process.exitCode=4;}catch(e){console.error(e.message);process.exitCode=2;}

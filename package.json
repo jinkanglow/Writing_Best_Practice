@@ -1,0 +1,47 @@
+{
+  "name": "writing-best-practices",
+  "version": "11.8.0",
+  "private": true,
+  "description": "Local-first writing quality CLI with fail-closed editorial release gate",
+  "type": "module",
+  "bin": {
+    "writing-quality": "./bin/writing-quality.js"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check src/editorial-release-diagnostics.js && node --check src/editorial-quality-evidence.js && node --check src/editorial-core-qualification.js && node --check src/editorial-selective.js && node --check src/editorial-integration.js && node --check src/editorial-native.js && node --check src/editorial-execution-graph.js && node --check src/editorial-consolidated.js && node --check src/editorial-evidence-session.js && node --check scripts/editorial-consolidated.js && node --check src/editorial-runtime.js && node --check scripts/editorial-runtime.js && node --check src/editorial-v109.js && node --check scripts/editorial-v109.js && node --check src/editorial-v108.js && node --check scripts/editorial-v108.js && node --check src/editorial-v107.js && node --check scripts/editorial-v107.js && node --check src/editorial-v106.js && node --check scripts/editorial-v106.js && node --check src/editorial-v105.js && node --check scripts/editorial-v105.js && node --check src/editorial-qualification-v104.js && node --check scripts/editorial-qualification-v104.js && node --check src/editorial-context.js && node --check scripts/editorial-context.js && node --check src/editorial-compression.js && node --check scripts/editorial-compression.js && node --check src/editorial-orchestration.js && node --check scripts/editorial-orchestration.js && node --check src/editorial-intelligence.js && node --check scripts/editorial-intelligence.js && node --check src/editorial-originality.js && node --check scripts/editorial-originality.js && node --check src/fusion-plan.js && node --check scripts/fusion-plan.js && node --check src/craft-dataset-qualification.js && node --check scripts/editorial-qualification.js && node --check src/craft-annotation-bias.js && node --check scripts/editorial-bias.js && node --check src/craft-annotation-governance.js && node --check scripts/editorial-governance.js && node --check src/craft-case-collection.js && node --check scripts/editorial-cases.js && node --check src/craft-evaluation-protocol.js && node --check scripts/editorial-evaluation.js && node --check src/craft-editorial-benchmark.js && node --check scripts/editorial-benchmark.js && node --check src/craft-acceptance-regression.js && node --check scripts/editorial-regression.js && node --check src/craft-repair-acceptance.js && node --check scripts/editorial-repair-acceptance.js && node --check src/craft-repair.js && node --check scripts/editorial-repair.js && node --check src/craft-ci-diagnostics.js && node --check scripts/editorial-diagnostics.js && node --check src/craft-ci-assurance.js && node --check scripts/editorial-ci.js && node --check src/craft-incremental-executor.js && node --check src/craft-incremental.js && node --check src/craft-unified-release.js && node --check src/craft-unified-pipeline.js && node --check src/craft-dependency-coverage.js && node --check src/craft-source-change.js && node --check src/craft-source-provenance.js && node --check src/craft-evidence-bound.js && node --check src/craft-coherence.js && node --check src/craft-impact-release.js && node --check src/craft-structure-regression.js && node --check src/craft-revision-impact.js && node --check src/craft-paragraph-execution.js && node --check src/craft-paragraph.js && node --check src/craft-drafting.js && node --check src/craft-workflow.js && node --check src/craft-contract.js && node --check src/counterargument-review.js && node --check src/counterargument-release.js && node --check src/inference-dependency.js && node --check src/dependency-release.js && node --check src/inference-review.js && node --check src/inference-release.js && node --check src/claim-evidence-review.js && node --check src/evidence-chain-release.js && node --check src/acquisition-evidence-chain.js && node --check src/source-acquisition.js && node --check src/source-snapshot.js && node --check src/reconciliation-evidence.js && node --check src/metric-reconciliation.js && node --check src/source-conflicts.js && node --check src/source-governance.js && node --check src/fact-evidence.js && node --check src/fact-granular.js && node --check src/fact-coverage.js && node --check src/financial-facts.js && node --check src/numerical-integrity.js && node --check src/editorial-corpus.js && node --check src/rewrite-risk-benchmark.js && node --check src/rewrite-risk.js && node --check src/claim-aware-rewrite.js && node --check src/avoid-ai-revision.js && node --check src/avoid-ai-policy.js && node --check src/avoid-ai-tiers.js && node --check src/avoid-ai-writing.js && node --check src/graph-spans.js && node --check src/graph-extraction.js && node --check src/argument-graph.js && node --check src/claim-integrity.js && node --check src/revision-trace.js && node --check src/final-gate.js && node --check src/editorial-release.js && node --check src/editorial-safety.js && node --check src/style-signals.js && node --check src/regression-attribution.js && node --check src/revision-acceptance.js && node --check src/revision-plan.js && node --check src/workflow.js && node --check src/release-evidence.js && node --check src/release-gate.js && node --check src/drift.js && node --check src/revision.js && node --check src/review-analysis.js && node --check src/annotation.js && node --check src/local-provider.js && node --check src/provider.js && node --check src/provenance.js && node --check src/benchmark.js && node --check src/markdown.js && node --check src/extraction.js && node --check src/core.js && node --check src/contracts.js && node --check src/verification.js && node --check src/evidence.js && node --check src/assurance.js && node --check src/patches.js && node --check bin/writing-quality.js && npm test",
+    "editorial:ci": "node scripts/editorial-ci.js --file examples/ci/article.md --manifest examples/ci/manifest.json --output editorial-assurance.json",
+    "editorial:regression": "node scripts/editorial-regression.js run --suite benchmarks/acceptance/cases.json --output editorial-regression.json",
+    "editorial:benchmark": "node scripts/editorial-benchmark.js run --dataset benchmarks/editorial/synthetic.example.json --output editorial-benchmark.json",
+    "editorial:evaluation": "node scripts/editorial-evaluation.js run --dataset benchmarks/editorial/synthetic.example.json --protocol benchmarks/editorial/evaluation-protocol.example.json --output editorial-evaluation.json",
+    "editorial:governance": "node scripts/editorial-governance.js audit --registry examples/governance/registry.example.json --policy benchmarks/editorial/governance-policy.example.json --output editorial-governance.json",
+    "editorial:bias": "node scripts/editorial-bias.js audit --registry examples/governance/registry.example.json --policy benchmarks/editorial/bias-policy.example.json --output editorial-bias.json",
+    "editorial:qualification": "node scripts/editorial-qualification.js audit --registry examples/governance/registry.example.json --governance-policy benchmarks/editorial/governance-policy.example.json --bias-policy benchmarks/editorial/bias-policy.example.json --output editorial-qualification.json",
+    "production:smoke": "node scripts/production-smoke.js",
+    "production:pack": "npm pack --dry-run --json",
+    "fusion:audit": "node scripts/fusion-plan.js audit --plan examples/fusion/romance-plan.json --output .writing/fusion-plan-report.json",
+    "knowledge:check": "node scripts/knowledge-check.js",
+    "anti-slop:scan": "node scripts/anti-slop-catalog.js scan --file examples/article.md --output .writing/anti-slop-catalog-report.json",
+    "anti-slop:regression": "node --test tests/v98-catalog.test.js",
+    "originality:audit": "node scripts/editorial-originality.js audit --file examples/originality/before.md --sources examples/originality/sources.json",
+    "intelligence:audit": "node scripts/editorial-intelligence.js audit --file examples/intelligence/article.md --plan examples/intelligence/plan.json",
+    "orchestration:audit": "node scripts/editorial-orchestration.js audit examples/intelligence/orchestration.json",
+    "compression:audit": "node scripts/editorial-compression.js audit examples/compression/input.json",
+    "context:audit": "node scripts/editorial-context.js audit examples/context/input.json",
+    "qualification:v104": "node scripts/editorial-qualification-v104.js audit examples/qualification-v104/input.json",
+    "benchmark:v104": "node scripts/editorial-qualification-v104.js benchmark examples/qualification-v104/cases.json",
+    "editorial:v105": "node scripts/editorial-v105.js audit examples/v105/input.json",
+    "editorial:v106": "node scripts/editorial-v106.js audit examples/v106/fiction.json",
+    "editorial:v107": "node scripts/editorial-v107.js audit examples/v107/input.json",
+    "editorial:v108": "node scripts/editorial-v108.js",
+    "editorial:v109": "node scripts/editorial-v109.js",
+    "editorial:runtime": "node scripts/editorial-runtime.js",
+    "editorial:consolidated": "node scripts/editorial-consolidated.js",
+    "evidence:inventory": "node scripts/evidence-inventory.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT",
+  "releaseCandidate": 13
+}

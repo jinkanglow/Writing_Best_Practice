@@ -1,0 +1,3 @@
+import fs from 'node:fs';import {runConsolidated,verifyConsolidated,qualifyDataset} from '../src/editorial-consolidated.js';
+const read=p=>JSON.parse(fs.readFileSync(p,'utf8'));
+try{const [cmd,file,policy,report]=process.argv.slice(2);const x=read(file),p=read(policy);const r=cmd==='audit'?await runConsolidated(x,p):cmd==='verify'?await verifyConsolidated(x,p,read(report)):cmd==='benchmark'?qualifyDataset(x,p):(()=>{throw Error('Unknown command')})();console.log(JSON.stringify(r,null,2));process.exitCode=r.status==='BLOCKED'?4:r.status==='INCOMPLETE'?3:0;}catch(e){console.error(e.message);process.exitCode=2;}

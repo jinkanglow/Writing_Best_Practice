@@ -1,0 +1,196 @@
+{
+  "schemaVersion": "8.9",
+  "datasetHash": "ffc185496a7ec463013e3120aabc664d97a05dfaa79d9dba8c6e7627adee8340",
+  "status": "MEASURED",
+  "metrics": {
+    "total": 5,
+    "tp": 5,
+    "fp": 0,
+    "tn": 0,
+    "fn": 0,
+    "abstained": 0,
+    "precision": 1,
+    "recall": 1,
+    "specificity": null,
+    "accuracy": 1,
+    "coverage": 1
+  },
+  "byCategory": {
+    "coherence": {
+      "total": 1,
+      "tp": 1,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": 1,
+      "recall": 1,
+      "specificity": null,
+      "accuracy": 1,
+      "coverage": 1
+    },
+    "evidence": {
+      "total": 2,
+      "tp": 2,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": 1,
+      "recall": 1,
+      "specificity": null,
+      "accuracy": 1,
+      "coverage": 1
+    },
+    "other": {
+      "total": 0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": null,
+      "recall": null,
+      "specificity": null,
+      "accuracy": null,
+      "coverage": null
+    },
+    "release": {
+      "total": 1,
+      "tp": 1,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": 1,
+      "recall": 1,
+      "specificity": null,
+      "accuracy": 1,
+      "coverage": 1
+    },
+    "structure": {
+      "total": 1,
+      "tp": 1,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": 1,
+      "recall": 1,
+      "specificity": null,
+      "accuracy": 1,
+      "coverage": 1
+    }
+  },
+  "byOrigin": {
+    "real-consented": {
+      "total": 0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": null,
+      "recall": null,
+      "specificity": null,
+      "accuracy": null,
+      "coverage": null
+    },
+    "real-redacted": {
+      "total": 0,
+      "tp": 0,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": null,
+      "recall": null,
+      "specificity": null,
+      "accuracy": null,
+      "coverage": null
+    },
+    "synthetic": {
+      "total": 5,
+      "tp": 5,
+      "fp": 0,
+      "tn": 0,
+      "fn": 0,
+      "abstained": 0,
+      "precision": 1,
+      "recall": 1,
+      "specificity": null,
+      "accuracy": 1,
+      "coverage": 1
+    }
+  },
+  "rows": [
+    {
+      "id": "missing_evidence_gate",
+      "origin": "synthetic",
+      "category": "evidence",
+      "gold": "ISSUE",
+      "prediction": "ISSUE",
+      "codes": [
+        "STAGE_INPUT_MISSING"
+      ],
+      "error": null,
+      "expectedCodesMatched": true
+    },
+    {
+      "id": "missing_coherence_gate",
+      "origin": "synthetic",
+      "category": "coherence",
+      "gold": "ISSUE",
+      "prediction": "ISSUE",
+      "codes": [
+        "STAGE_INPUT_MISSING"
+      ],
+      "error": null,
+      "expectedCodesMatched": true
+    },
+    {
+      "id": "missing_structure_gate",
+      "origin": "synthetic",
+      "category": "structure",
+      "gold": "ISSUE",
+      "prediction": "ISSUE",
+      "codes": [
+        "PREREQUISITE_NOT_READY",
+        "STAGE_INPUT_MISSING"
+      ],
+      "error": null,
+      "expectedCodesMatched": null
+    },
+    {
+      "id": "invalid_evidence_input",
+      "origin": "synthetic",
+      "category": "evidence",
+      "gold": "ISSUE",
+      "prediction": "ISSUE",
+      "codes": [
+        "INVALID_STAGE_INPUT"
+      ],
+      "error": null,
+      "expectedCodesMatched": true
+    },
+    {
+      "id": "missing_legacy_gate",
+      "origin": "synthetic",
+      "category": "release",
+      "gold": "ISSUE",
+      "prediction": "ISSUE",
+      "codes": [
+        "NO_REQUIRED_STAGES"
+      ],
+      "error": null,
+      "expectedCodesMatched": true
+    }
+  ],
+  "limitations": [
+    "Synthetic samples cannot establish real-world accuracy",
+    "ISSUE means an editorial gate did not pass, not a proven factual error",
+    "Ground-truth labels are supplied by annotators, not independently authenticated by this tool",
+    "Metrics are descriptive only; no confidence intervals or performance claims without representative sampling"
+  ],
+  "reportHash": "8709e97d5bb4dcdd59c7942821d9c909074d5762870514f9eda705527be6588f"
+}

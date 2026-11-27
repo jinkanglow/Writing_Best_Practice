@@ -1,0 +1,2 @@
+import fs from 'node:fs';import {auditV107,verifyV107,benchmarkV107} from '../src/editorial-v107.js';
+try{const [cmd,file,report]=process.argv.slice(2);const x=JSON.parse(fs.readFileSync(file,'utf8'));const r=cmd==='audit'?await auditV107(x):cmd==='verify'?await verifyV107(x,JSON.parse(fs.readFileSync(report,'utf8'))):cmd==='benchmark'?await benchmarkV107(x):(()=>{throw Error('Unknown command')})();console.log(JSON.stringify(r,null,2));process.exitCode=r.status==='BLOCKED'||r.passed<r.total?4:r.status==='INCOMPLETE'?3:0;}catch(e){console.error(e.message);process.exitCode=2;}
